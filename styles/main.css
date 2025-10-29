@@ -1,3 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Ubuntu", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+    background-color: #f3f3f3;
+}
+
 #header {
+    margin: 0;
+    padding: 0;
     background-color: #0e0e0e;
+    color: aliceblue;
+    position: sticky;
+    top: 0px;
+    height: 50px;
+    width: 100%;
+
+}
+
+#hero {
+    margin: 10px;
+    color: #0e0e0e;
+    height: 1000px;
 }
