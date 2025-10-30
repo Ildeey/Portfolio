@@ -1,26 +1,51 @@
-<html>
+<!doctype html>
+<html lang="ru">
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Klimov ILYA</title>
-    <meta name='viewport' content='1920px, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' href='styles/main.css'>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Портфолио</title>
+	<link rel="stylesheet" href="css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Sora:wght@100..800&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
-    <script src='scripts/main.js'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="header">
-        <p>обо мне</p>
-        <p>работа</p>
-        <p>контакты</p>
-    </div>
-    <div id="hero">
-        <div>  
-            <h1>ОБО МНЕ</h1>
-            <p>Я Илья, студент из Екатеринбурга. Занимаюсь графическим и UX/UI дизайном</p>
-        </div>
-    </div>
+	<header class="site-header" role="banner">
+		<nav class="main-nav" role="navigation" aria-label="Главное меню">
+			<ul class="nav-list">
+				<li><a href="#about">обо мне</a></li>
+				<li><a href="#work">работа</a></li>
+				<li><a href="#contacts">контакты</a></li>
+			</ul>
+		</nav>
+	</header>
+
+	<main>
+		<section id="hero" class="hero" role="region" aria-label="Главный блок">
+			<div class="hero-content">
+				<h1>ABOUT</h1>
+				<p>Меня зовут Илья. Я студент из Екатеринбурга, занимаюсь графическим и UI/UX дизайном. </p>
+				<a class="hero-image-link" href="/image.png">
+					<img src="/image.png" alt="Изображение — пример" />
+				</a>
+			</div>
+		</section>
+
+	</main>
+
+	<footer class="site-footer" role="contentinfo">
+		<section id="contacts">
+			<h2>Контакты</h2>
+			<address>
+				Email: <a href="mailto:kia201204@gmail.com">you@example.com</a><br/>
+				Телефон: <a href="tel:+79177000960">+7 (000) 000-00-00</a>
+			</address>
+		</section>
+
+		<section class="legal">
+			<p>© 2025 Klimov Ilya. Все права защищены.</p>
+			<p>t: @ildeey.</p>
+		</section>
+	</footer>
 </body>
 </html>
