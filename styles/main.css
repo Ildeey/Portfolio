@@ -5,7 +5,6 @@
     font-family: "Ubuntu", sans-serif;
     font-weight: 300;
     font-style: normal;
-    background-color: #f3f3f3;
 }
 
 #header {
@@ -21,7 +20,24 @@
 }
 
 #hero {
-    margin: 10px;
+    margin: 0px;
     color: #0e0e0e;
     height: 1000px;
+    background-color: #f3f3f3;
+}
+
+#hero div {
+    padding: 50px;
+    color: #0e0e0e;
+    height: 1000px;
+}
+
+div h1 {
+    font-size: 72;
+    font-weight: 400;
+}
+
+div p {
+    font-size: 24;
+    font-weight: 200;
 }
