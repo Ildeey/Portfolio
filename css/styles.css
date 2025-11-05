@@ -6,22 +6,22 @@
 
 *{box-sizing:border-box;margin:0;padding:0}
 
+/* Страница как колонка, чтобы футер прижимался к низу при коротком контенте */
 body{
 	line-height:1.4;
 	min-height:100vh;
 	padding-top: var(--header-height);
-	/* Make page a column so footer can stick to bottom when content short */
 	display:flex;
 	flex-direction:column;
 }
 
-/* Ensure main grows to push footer to bottom */
+/* main растёт, чтобы толкать футер вниз */
 main{
 	flex:1 0 auto;
 }
 
+/* Хедер (фиксирован) */
 .site-header{
-
 	position:fixed;
 	top:0;
 	left:0;
@@ -29,7 +29,6 @@ main{
 	height:var(--header-height);
 	background:#ffffffcc;
 	backdrop-filter: blur(4px);
-	border-bottom:1px solid rgba(0,0,0,0.06);
 	z-index:1000;
 	display:flex;
 	align-items:center;
@@ -62,6 +61,7 @@ main{
 	background-color:rgba(0,0,0,0.05);
 }
 
+/* Хиро-блок */
 .hero{
 	display:flex;
 	justify-content:center;
@@ -94,6 +94,7 @@ main{
 	display:block;
 }
 
+/* Футер */
 .site-footer{
 	background:#1f2937;
 	color:#e6eef8;
@@ -135,25 +136,89 @@ main{
 	opacity:1;
 }
 
-@media (max-width: 720px){
-	:root{ --header-height: 56px; }
-	.hero-content{
-		flex-direction:column;
-		align-items:center;
-	}
-	.hero-image-link{
-		flex:0 0 auto;
-		max-width:90%;
-	}
-	.main-nav .nav-list{ gap:12px; }
-	.footer-inner{
-		flex-direction:column;
-		align-items:center;
-		text-align:center;
-	}
-	.footer-left,
-	.footer-right{
-		width:100%;
-	}
-	.footer-right{ margin-top:12px; }
+/* Галерея проектов — на всю ширину, фиксированная высота */
+.projects-section{
+	width:100vw;
+	position:relative;
+	padding:0; /* убираем боковые отступы чтобы занять всю ширину */
+	box-sizing:border-box;
+}
+
+.section-title{
+	text-align:center;
+	margin:18px 0;
+	font-size:1.25rem;
+}
+
+/* Упрощённый карусельный layout: без стрелок, областть занимает 50vh */
+.projects-carousel{
+	position:relative;
+	width:100%;
+	/* overflow visible, чтобы тени карточек могли выходить за пределы */
+	overflow:visible;
+}
+
+/* Область прокрутки: горизонтальная прокрутка, по высоте 50vh */
+.projects-viewport{
+	overflow-x:auto;
+	overflow-y:visible;
+	scroll-behavior:smooth;
+	-webkit-overflow-scrolling:touch;
+	height:50vh; /* 50% высоты окна */
+	display:flex;
+	align-items:center; /* вертикальное центрирование карточек */
+	padding:8px 20px;
+	box-sizing:border-box;
+}
+
+/* Трек карточек (горизонтальный ряд) */
+.projects-track{
+	display:flex;
+	gap:28px;
+	align-items:center;
+	list-style:none;
+	padding:0;
+	margin:0;
+	width:max-content;
+}
+
+/* Карточка проекта: тень и трансформации, тени могут выходить за контейнер */
+.project-card{
+	width:50%;
+	background:#fff;
+	border-radius:12px;
+	box-shadow:0 10px 24px rgba(0,0,0,0.08);
+	overflow:visible; /* тени не обрезать */
+	cursor:pointer;
+	flex:0 0 auto;
+	text-align:center;
+	transition: transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s cubic-bezier(.2,.9,.3,1);
+	transform-origin:center center;
+	will-change:transform, box-shadow;
+	margin-top:12px;
+	margin-bottom:12px;
+}
+.project-card img{
+	display:block;
+	border-radius: 20;
+	width:100%;
+	height:60%;
+	object-fit:cover;
+}
+.project-card h3{
+	padding:12px;
+	font-size:1rem;
+	margin:0;
+}
+
+/* Видимый фокус для клавиатурных пользователей */
+.project-card:focus{
+	outline: 3px solid rgba(0,120,215,0.12);
+}
+
+/* Адаптация для маленьких экранов */
+@media (max-width:720px){
+	.projects-viewport{ height:48vh; padding:8px 12px; }
+	.project-card{ width:180px; }
+	.projects-track{ gap:14px; }
 }
