@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Санаинспайр — Превью</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header" role="banner">
+    <button class="nav-toggle" aria-controls="main-nav-list" aria-expanded="false" aria-label="Открыть меню">Меню</button>
+    <nav class="main-nav" role="navigation" aria-label="Главное меню">
+      <ul id="main-nav-list" class="nav-list">
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="about.html">Обо мне</a></li>
+        <li><a href="#work">Работы</a></li>
+        <li><a href="#contacts">Контакты</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero--sananes" id="hero">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <h1 class="title-ru">ДИЗАЙНЕР</h1>
+          <h2 class="title-en">DESIGNER</h2>
+        </div>
+        <div class="hero-media">
+          <!-- inline SVG filter for displacement-based distortion -->
+          <svg style="position:absolute;width:0;height:0;" aria-hidden="true">
+            <defs>
+              <filter id="distort">
+                <feTurbulence id="fturb" baseFrequency="0" numOctaves="2" seed="2" result="turb" />
+                <feDisplacementMap id="fdisp" in="SourceGraphic" in2="turb" scale="0" xChannelSelector="R" yChannelSelector="G" />
+              </filter>
+            </defs>
+          </svg>
+          <img class="kit" src="images/ktya.jpg" alt="kit preview" tabindex="0" style="width:420px;max-width:100%;border-radius:12px;display:block;box-shadow:0 12px 32px rgba(0,0,0,0.35);filter:url(#distort);">
+        </div>
+      </div>
+    </section>
+
+    <section id="work" class="section--split" aria-label="Работы">
+      <div>
+        <h2>Работы</h2>
+        <p>Короткие описания и визуальные карточки, которые можно прокручивать или смотреть в сетке.</p>
+        <div class="projects-grid">
+          <article class="project-card" tabindex="0">
+            <img src="https://picsum.photos/420/260?random=4" alt="Проект 1">
+            <h3>Времена года</h3>
+            <p>Айдентика и сайт выставки.</p>
+          </article>
+          <article class="project-card" tabindex="0">
+            <img src="https://picsum.photos/420/260?random=5" alt="Проект 2">
+            <h3>MOZAEKB</h3>
+            <p>Экспериментальная типографика.</p>
+          </article>
+          <article class="project-card" tabindex="0">
+            <img src="https://picsum.photos/420/260?random=6" alt="Проект 3">
+            <h3>SIROB</h3>
+            <p>Иллюстрации и паттерны.</p>
+          </article>
+        </div>
+      </div>
+      <aside>
+        <h3>О проекте</h3>
+        <p>Короткая заметка о направлении работ: нетривиальная типографика, размытое пространство, акцент на простоту.</p>
+        <p><a class="cta" href="#contacts">Написать</a></p>
+      </aside>
+    </section>
+
+    <section id="contacts" style="padding:48px var(--gap);">
+      <h2>Контакты</h2>
+      <p>Email: <a href="mailto:kia201204@gmail.com">kia201204@gmail.com</a></p>
+    </section>
+  </main>
+
+  <footer class="site-footer--alt" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <p>© 2025 — портфолио</p>
+      </div>
+      <div class="footer-right">
+        <p>tg: @ildeey</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

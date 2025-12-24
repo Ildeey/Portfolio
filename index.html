@@ -11,8 +11,9 @@
 </head>
 <body>
 	<header class="site-header" role="banner">
+		<button class="nav-toggle" aria-controls="main-nav-list" aria-expanded="false" aria-label="Открыть меню">Меню</button>
 		<nav class="main-nav" role="navigation" aria-label="Главное меню">
-			<ul class="nav-list">
+			<ul id="main-nav-list" class="nav-list">
 				<li><a href="#about">обо мне</a></li>
 				<li><a href="#work">работа</a></li>
 				<li><a href="#contacts">контакты</a></li>
@@ -24,8 +25,8 @@
 		<section id="hero" class="hero" role="region" aria-label="Главный блок">
 			<div class="hero-content">
 				<div class="hero-text">
-					<h1>ABOUT</h1>
-					<p>Меня зовут Илья. Я студент из Екатеринбурга, занимаюсь графическим и UI/UX дизайном. </p>
+					<h1>ОБО МНЕ</h1>
+					<p>Меня зовут Илья. Я студент из Екатеринбурга, занимаюсь графическим и UI/UX дизайном. Разрабатываю сайт для дисциплинны третьего курса "Технологиский практикум по профилю"</p>
 				</div>
 				<a class="hero-image-link" href="images/milenka2.JPG" target="parent">
 					<img src="images/milenka.jpg" alt="Изображение" />
@@ -35,7 +36,7 @@
 
 		<!-- галлерея -->
 		<section id="projects" class="projects-section" aria-label="Проекты">
-			<h2 class="section-title">Проекты</h2>
+			<h2 class="section-title">ПРОЕКТЫ</h2>
 
 			<div class="projects-carousel" aria-roledescription="carousel">
 				<div class="projects-viewport" tabindex="0" aria-label="Галерея проектов">
@@ -102,6 +103,6 @@
 		</div>
 	</footer>
 
-	<script src="scripts/script.js" defer></script>
+	<script src="script.js" defer></script>
 </body>
 </html>
