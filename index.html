@@ -1,108 +1,360 @@
-<!doctype html>
-<html lang="ru">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width,initial-scale=1" />
-	<title>Klimov Ilya</title>
-	<link rel="stylesheet" href="css/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KLIMOV ILYA</title>
+  <meta name="description" content="Designer короче">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-	<header class="site-header" role="banner">
-		<button class="nav-toggle" aria-controls="main-nav-list" aria-expanded="false" aria-label="Открыть меню">Меню</button>
-		<nav class="main-nav" role="navigation" aria-label="Главное меню">
-			<ul id="main-nav-list" class="nav-list">
-				<li><a href="#about">обо мне</a></li>
-				<li><a href="#work">работа</a></li>
-				<li><a href="#contacts">контакты</a></li>
-			</ul>
-		</nav>
-	</header>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <a href="#hero" class="logo">Климов Илья</a>
+      <div class="header-info">
+        <div class="location">
+              <p>Russian Federation</p>
+              <p>Работаю глобально</p>
+        </div>
+        <div class="cta-wrapper">
+            <a href="work.html" class="btn-primary" target="_blank" rel="noopener">
+              <span>Доступен к работе</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </a>
+          </div>
+      </div>
+    </div>
+  </header>
 
-	<main>
-		<section id="hero" class="hero" role="region" aria-label="Главный блок">
-			<div class="hero-content">
-				<div class="hero-text">
-					<h1>ОБО МНЕ</h1>
-					<p>Меня зовут Илья. Я студент из Екатеринбурга, занимаюсь графическим и UI/UX дизайном. Разрабатываю сайт для дисциплинны третьего курса "Технологиский практикум по профилю"</p>
-				</div>
-				<a class="hero-image-link" href="images/milenka2.JPG" target="parent">
-					<img src="images/milenka.jpg" alt="Изображение" />
-				</a>
-			</div>
-		</section>
+  <!-- Hero Section -->
+  <section id="hero" class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-left">
+          <div class="hero-title-group">
+            <div class="badge">01</div>
+            <h1 class="hero-title">DESIGNER</h1>
+          </div>
+          <div class="hero-title-group">
+            <div class="badge">02</div>
+            <h2 class="hero-title">ДИЗАЙНЕР</h2>
+          </div>
+        </div>
+        <div>
+          <img src="images/kit.png" alt="kit">
+        </div>
+        <div class="hero-right">
+          <div class="hero-info">
+            <div class="meta">
+              <p class="meta-text">V1.0</p>
+              <p class="meta-text">23.12.25</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="blur"></div>
+    </div>
+  </section>
 
-		<!-- галлерея -->
-		<section id="projects" class="projects-section" aria-label="Проекты">
-			<h2 class="section-title">ПРОЕКТЫ</h2>
+  <!-- About Section -->
+  <section id="about" class="about">
+    <div class="logo-badge">N</div>
+    <div class="container">
+      <p class="section-label">ОБО МНЕ</p>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>Design Engineer & Product Designer crafting cutting-edge and innovative interactive experiences using modern web technologies.</p>
+          <p>Over a decade of experience in design and development, specializing in crafting intuitive, user-focused interfaces for websites, apps, and digital products.</p>
+          <p>Co-Founder of <a href="#" class="link">Conflux</a> and other startups.</p>
+          <p>Currently looking for a new challenge.</p>
+          <p>Previously worked at <a href="#" class="link">TB Auctions</a>, <a href="#" class="link">Pixel Union</a>, <a href="#" class="link">Adaptia</a>, <a href="#" class="link">Veer One</a> and many others.</p>
+          <p>Born and raised in Canary Islands, Spain.</p>
+        </div>
 
-			<div class="projects-carousel" aria-roledescription="carousel">
-				<div class="projects-viewport" tabindex="0" aria-label="Галерея проектов">
-					<ul class="projects-track" role="list">
-						<li role="listitem">
-							<a class="project-card" href="projects/project1.html" target="parent"
-								data-title="ВРЕМЕНА ГОДА"
-								data-desc="Разработка айдентики и веб-сайта для выставки">
-								<img src="images/seasons/6.png" alt="ВРЕМЕНА ГОДА — миниатюра">
-								<h3>ВРЕМЕНА ГОДА</h3>
-							</a>
-						</li>
-						<li role="listitem">
-							<a class="project-card" href="projects/project2.html"
-								data-title="MOZAEKB"
-								data-desc="Краткое описание проекта 2.">
-								<img src="images/project2.jpg" alt="MOZAEKB — миниатюра">
-								<h3>MOZAEKB</h3>
-							</a>
-						</li>
-						<li role="listitem">
-							<a class="project-card" href="projects/project3.html"
-								data-title="SIROB"
-								data-desc="Краткое описание проекта 3.">
-								<img src="images/project3.jpg" alt="SIROB — миниатюра">
-								<h3>SIROB</h3>
-							</a>
-						</li>
-						<li role="listitem">
-							<a class="project-card" href="projects/project4.html"
-								data-title="ИЛЛЮСТРАЦИИ"
-								data-desc="Краткое описание проекта 4.">
-								<img src="images/project4.jpg" alt="ИЛЛЮСТРАЦИИ — миниатюра">
-								<h3>ИЛЛЮСТРАЦИИ</h3>
-							</a>
-						</li>
-						<li role="listitem">
-							<a class="project-card" href="projects/project5.html"
-								data-title="Проект 5"
-								data-desc="Краткое описание проекта 5.">
-								<img src="images/project5.jpg" alt="Проект 5 — миниатюра">
-								<h3>Проект 5</h3>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</section>
+        <div class="about-sidebar">
+          <div class="social-links">
+            <a href="https://github.com/sananes" class="social-link" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              GitHub
+            </a>
+            <a href="https://instagram.com/aasananes" class="social-link" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Instagram
+            </a>
+            <a href="https://www.linkedin.com/in/aasananes/" class="social-link" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              LinkedIn
+            </a>
+            <a href="https://dribbble.com/sananes" class="social-link" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Dribbble
+            </a>
+          </div>
 
-	</main>
+          <div class="info-block">
+            <p>17th November, 1989</p>
+            <p>Canary Islands</p>
+            <p>Spain</p>
+          </div>
 
-	<footer class="site-footer" role="contentinfo">
-		<div class="footer-inner">
-			<div class="footer-left">
-				<address>
-					Телефон: <a href="tel:+79177000960">+7 (917) 700-09-60</a><br/>
-					Email: <a href="mailto:kia201204@gmail.com">kia201204@gmail.com</a>
-				</address>
-			</div>
-			<div class="footer-right">
-				<p>© 2025 Klimov Ilya. Все права защищены.</p>
-				<p>tg: @ildeey.</p>
-			</div>
-		</div>
-	</footer>
+          <div class="coordinates">
+            <p>23.5742754°</p>
+            <p>S46.6388007° W</p>
+          </div>
 
-	<script src="script.js" defer></script>
+          <div class="barcode-wrapper">
+            <div class="barcode-text">YSWYETWKSY_62CLB</div>
+            <svg class="barcode" width="280" height="60" viewBox="0 0 280 60"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work Section -->
+  <section id="work" class="work">
+    <div class="container">
+      <div class="work-header">
+        <h2 class="section-title">Work</h2>
+        <div class="work-stats">
+          <p>PROJECTS: &gt; 100 DEPLOYED</p>
+          <p>USERS_SERVED: 1.2M+</p>
+          <p>A/B TESTS: 450+</p>
+        </div>
+      </div>
+
+      <div class="featured-projects">
+        <a href="#" class="project-card">
+          <div class="project-image">
+            <img src="images/kartinka.jpg" alt="TB Auctions">
+          </div>
+          <div class="project-content">
+            <div class="project-info">
+              <p class="project-year">2020 - 2015</p>
+              <h3 class="project-title">TB Auctions</h3>
+              <p class="project-description">Nine brands. One messy prototype. An industry with no room for mistakes.</p>
+            </div>
+            <div class="project-view">[ View ]</div>
+          </div>
+        </a>
+
+        <a href="#" class="project-card">
+          <div class="project-image">
+            <img src="images/kartinka2.jpg" alt="Rovu">
+          </div>
+          <div class="project-content">
+            <div class="project-info">
+              <p class="project-year">2025</p>
+              <h3 class="project-title">Rovu</h3>
+              <p class="project-description">Most tools for handling reviews were clunky or robotic. I wanted to design an experience that saved time but still sounded like the business itself.</p>
+            </div>
+            <div class="project-view">[ View ]</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="project-list">
+        <div class="project-item">
+          <div class="project-item-info">
+            <span class="project-item-year">2024</span>
+            <span class="project-item-name">TLD Records</span>
+            <span class="project-item-role">Designer & Developer</span>
+          </div>
+          <span class="project-item-view">[ View ]</span>
+        </div>
+        <div class="project-item">
+          <div class="project-item-info">
+            <span class="project-item-year">2023</span>
+            <span class="project-item-name">Adaptia</span>
+            <span class="project-item-role">Lead Designer & Developer</span>
+          </div>
+          <span class="project-item-view">[ View ]</span>
+        </div>
+        <div class="project-item">
+          <div class="project-item-info">
+            <span class="project-item-year">2015</span>
+            <span class="project-item-name">Conflux</span>
+            <span class="project-item-role">Co-Founder</span>
+          </div>
+          <span class="project-item-view">[ View ]</span>
+        </div>
+        <div class="project-item">
+          <div class="project-item-info">
+            <span class="project-item-year">2020</span>
+            <span class="project-item-name">Bookables</span>
+            <span class="project-item-role">Co-Founder</span>
+          </div>
+          <span class="project-item-view">[ View ]</span>
+        </div>
+        <div class="project-item">
+          <div class="project-item-info">
+            <span class="project-item-year">2022</span>
+            <span class="project-item-name">Supaflags</span>
+            <span class="project-item-role">Co-Founder</span>
+          </div>
+          <span class="project-item-view">[ View ]</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience Section -->
+  <section id="experience" class="experience">
+    <div class="container">
+      <h2 class="section-title">Experience</h2>
+
+      <div class="experience-list">
+        <div class="experience-item">
+          <p class="experience-period">2020 - 2025</p>
+          <h3 class="experience-title">Senior Product Design Engineer</h3>
+          <p class="experience-company">TB Auctions</p>
+        </div>
+        <div class="experience-item">
+          <p class="experience-period">2012 - 2019</p>
+          <h3 class="experience-title">Senior Product Designer</h3>
+          <p class="experience-company">Pixel Union</p>
+        </div>
+        <div class="experience-item">
+          <p class="experience-period">2016 - Present</p>
+          <h3 class="experience-title">Brand Designer</h3>
+          <p class="experience-company">Adaptia Design</p>
+        </div>
+        <div class="experience-item">
+          <p class="experience-period">2012 - 2016</p>
+          <h3 class="experience-title">Product Designer</h3>
+          <p class="experience-company">Anova Culinary</p>
+        </div>
+        <div class="experience-item">
+          <p class="experience-period">Jan 2015 - Nov 2015</p>
+          <h3 class="experience-title">Product Designer</h3>
+          <p class="experience-company">Veer One</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Stack Section -->
+  <section id="tech" class="tech">
+    <div class="container">
+      <div class="tech-grid">
+        <div class="tech-header">
+          <h2 class="tech-title">Tech Stack</h2>
+        </div>
+        <div class="tech-list">
+          <p>Figma</p>
+          <p>React</p>
+          <p>SolidJS</p>
+          <p>Next.js</p>
+          <p>Solid Start</p>
+          <p>TypeScript</p>
+          <p>GSAP</p>
+          <p>Motion.dev</p>
+          <p>Tailwind</p>
+          <p>Sanity</p>
+          <p>Supabase</p>
+        </div>
+      </div>
+
+      <div class="barcode-wrapper">
+        <div class="barcode-text">ALXMHVNBTV86D)IE</div>
+        <svg class="barcode" width="280" height="60" viewBox="0 0 280 60"></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer CTA -->
+  <section id="contact" class="footer-cta">
+    <div class="vertical-text left">01010101</div>
+    <div class="vertical-text right">01010101</div>
+    <div class="container">
+      <div class="cta-content">
+        <p class="cta-binary">01010101010101010101</p>
+        <h2 class="cta-title">LET'S WORK TOGETHER</h2>
+      </div>
+      <a href="https://cal.com/sananes/30min" class="cta-link" target="_blank" rel="noopener">
+        <span>SCHEDULE A CALL</span>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <path d="M4 24H44M44 24L24 4M44 24L24 44" stroke="currentColor" stroke-width="4"/>
+        </svg>
+      </a>
+
+      <div class="footer-social">
+        <a href="https://github.com/sananes" class="footer-social-link" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M2 10H18M18 10L10 2M18 10L10 18" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://instagram.com/aasananes" class="footer-social-link" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M2 10H18M18 10L10 2M18 10L10 18" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>Instagram</span>
+        </a>
+        <a href="https://www.linkedin.com/in/aasananes/" class="footer-social-link" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M2 10H18M18 10L10 2M18 10L10 18" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>LinkedIn</span>
+        </a>
+        <a href="https://dribbble.com/sananes" class="footer-social-link" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M2 10H18M18 10L10 2M18 10L10 18" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>Dribbble</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    
+    <div class="container">
+      <div class="footer-content">
+        <p class="footer-text">© Copyright 2025</p>
+        <p class="footer-text">All rights reserved</p>
+        <div class="footer-links">
+          <a href="https://github.com/sananes" class="footer-link" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            GitHub
+          </a>
+          <a href="https://instagram.com/aasananes" class="footer-link" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Instagram
+          </a>
+          <a href="https://www.linkedin.com/in/aasananes/" class="footer-link" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            LinkedIn
+          </a>
+          <a href="https://dribbble.com/sananes" class="footer-link" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Dribbble
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
