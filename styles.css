@@ -21,6 +21,11 @@
   box-sizing: border-box;
 }
 
+::selection {
+  color: rgb(0, 0, 0);
+  background:#00ff1a
+}
+
 body {
   font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
   font-weight: 200;
@@ -193,18 +198,6 @@ section {
 /* ============================================
    HERO SECTION
    ============================================ */
-.hero {
-  min-height: 100vh;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  padding: 0;
-  margin-top: 0px;
-  overflow: hidden;
-}
-
 .lines {
   position: absolute;
   top: 0;
@@ -213,6 +206,7 @@ section {
   height: 100%;
   margin: auto;
   width: 90vw;
+  z-index: 1;
 }
 
 .line {
@@ -237,7 +231,7 @@ section {
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, #ffffff 50%, #ffffff 100%);
   animation: drop 7s 0s infinite;
   animation-fill-mode: forwards;
-  animation-timing-function: cubic-bezier(0.6, 0.1, 0, 0.97);
+  animation-timing-function: cubic-bezier(0.19, 0.70, 0.02, 1.08);
 }
 
 .line:nth-child(1) {
@@ -280,18 +274,60 @@ section {
   }
 }
 
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+.hero {
+  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0;
+  margin-top: 0px;
+  overflow: hidden;
+}
+
+.hero-center-image {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  padding: 3rem;
-  align-items: flex-end;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 2;
+}
+
+.hero-center-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.hero-meta-top {
+  position: absolute;
+  top: 5rem;
+  right: 3rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  line-height: 10px;
+}
+
+.hero-corner-left {
+  position: absolute;
+  bottom: 3rem;
+  left: 3rem;
+  z-index: 2;
+}
+
+.hero-corner-right {
+  position: absolute;
+  bottom: 3rem;
+  right: 3rem;
+  z-index: 2;
+  
+}
+
+.hero-grid {
+  display: none;
 }
 
 .hero-left {
@@ -306,7 +342,7 @@ section {
 .hero-title-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  line-height: 10px;
   width: fit-content;
   align-self: flex-end;
 }
@@ -314,6 +350,7 @@ section {
 .badge {
   display: inline-block;
   padding: 0;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
   width: fit-content;
   color: #737373;
@@ -322,7 +359,7 @@ section {
 
 .hero-title {
   font-size: 4rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.1;
   font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
   text-transform: uppercase;
@@ -556,7 +593,7 @@ section {
 }
 
 .project-image {
-  aspect-ratio: 16/9;
+  aspect-ratio: 40/15;
   background: #f5f5f5;
   overflow: hidden;
 }
@@ -564,12 +601,8 @@ section {
 .project-image img {
   width: 100%;
   height: 100%;
+  text-align: center;
   object-fit: cover;
-  transition: transform 0.5s;
-}
-
-.project-card:hover .project-image img {
-  transform: scale(1.05);
 }
 
 .project-content {
@@ -588,7 +621,7 @@ section {
 .project-title {
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: -0.25rem;
 }
 
 .project-description {
@@ -809,7 +842,7 @@ section {
    FOOTER
    ============================================ */
 .footer {
-  padding: 3rem 0;
+  padding: 2rem 0;
 }
 
 .footer-content {
@@ -823,6 +856,9 @@ section {
 .footer-text {
   font-size: 0.875rem;
   color: #737373;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  
 }
 
 .footer-links {
@@ -835,7 +871,7 @@ section {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #262626;
+  color: #737373;
   text-decoration: none;
   transition: opacity 0.3s;
 }
@@ -989,7 +1025,7 @@ section {
 }
 
 .modal-close:hover {
-  color: #00ff1a;
+  color: #ffffffa8;
 }
 
 .modal-body {
@@ -1006,7 +1042,7 @@ section {
   height: 100%;
   object-fit: cover;
   border-radius: 0.5rem;
-  max-height: 600px;
+  max-height: 500px;
 }
 
 .modal-info {
@@ -1032,6 +1068,7 @@ section {
   justify-content: center;
   padding: 1.5rem 2rem;
   border-top: 1px solid #262626;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .modal-btn {
@@ -1039,7 +1076,7 @@ section {
   background: #262626;
   color: #f0f0f0;
   border: 1px solid #262626;
-  border-radius: 0.5rem;
+  border-radius: 4rem;
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.95rem;
@@ -1047,9 +1084,9 @@ section {
 }
 
 .modal-btn:hover {
-  background: #00ff1a;
-  color: #000;
-  border-color: #00ff1a;
+  background: #00000077;
+  color: #ffffff;
+  border-color: #000000a8;
 }
 
 .modal-btn:disabled {
@@ -1073,6 +1110,7 @@ section {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   color: #f0f0f0;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .form-group {
@@ -1109,15 +1147,15 @@ section {
 .btn-submit {
   width: 100%;
   padding: 0.75rem;
-  background: #00ff1a;
-  color: #000;
-  border: none;
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #262626;
   border-radius: 0.5rem;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   cursor: pointer;
   transition: opacity 0.3s ease;
-  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .btn-submit:hover {

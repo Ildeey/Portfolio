@@ -76,11 +76,11 @@ document.addEventListener('DOMContentLoaded', function() {
 let currentProjectId = null;
 
 const galleryData = {
-  1: { title: 'TB Auctions', image: 'images/kartinka.jpg', description: 'E-commerce platform design for auction management' },
-  2: { title: 'Rovu', image: 'images/kartinka2.jpg', description: 'Brand identity and digital design system' },
-  3: { title: 'TLD Records', image: 'images/kit.jpg', description: 'Music label branding and web design' },
-  4: { title: 'Adaptia', image: 'images/ktya.jpg', description: 'Design and strategy consultancy brand' },
-  5: { title: 'Conflux', image: 'images/kit.png', description: 'Tech startup UI/UX design' }
+  1: { title: 'Актёр суперсемейки', image: 'images/kartinka.jpg', description: 'Пару раз пролетал над Нью-Йорком' },
+  2: { title: 'Тюльбан', image: 'images/2.jpg', description: 'ТЮЛЬБАН' },
+  3: { title: '4D-проекция кота', image: 'images/kit.jpg', description: 'Создание 4-мерной мэппинг-проекции кота на здание Свердловской Екатеринбуржской фабрики заводов ЕАСИ' },
+  4: { title: 'КТЯ', image: 'images/ktya.jpg', description: 'Требуется дополнительная информация...' },
+  5: { title: 'Кот на планете', image: 'images/1.jpg', description: 'Первый проект для школьной выставки' }
 };
 
 /* ============================================
@@ -148,16 +148,30 @@ function updateNavigationButtons() {
    ============================================ */
 document.addEventListener('DOMContentLoaded', function() {
   const galleryCards = document.querySelectorAll('.gallery-card:not(.empty)');
+  const emptyCards = document.querySelectorAll('.gallery-card.empty');
   const modal = document.getElementById('imageModal');
   const closeBtn = document.querySelector('.modal-close');
   const prevBtn = document.querySelector('.modal-prev');
   const nextBtn = document.querySelector('.modal-next');
 
-  // Gallery card click handlers
+  // Gallery card click handlers for filled cards
   galleryCards.forEach(card => {
     card.addEventListener('click', function() {
       const projectId = parseInt(this.getAttribute('data-project-id'));
       openModal(projectId);
+    });
+  });
+
+  // Empty card click handlers - scroll to form
+  emptyCards.forEach(card => {
+    card.addEventListener('click', function() {
+      const formElement = document.getElementById('addProjectForm');
+      if (formElement) {
+        formElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
     });
   });
 
@@ -230,6 +244,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add click handler to new card
     emptyCard.addEventListener('click', function() {
       openModal(parseInt(projectId));
+    });
+
+    // Re-bind empty cards since we removed one from the empty class
+    const remainingEmptyCards = document.querySelectorAll('.gallery-card.empty');
+    remainingEmptyCards.forEach(card => {
+      card.onclick = function() {
+        const formElement = document.getElementById('addProjectForm');
+        if (formElement) {
+          formElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      };
     });
 
     // Reset form
