@@ -1,108 +1,211 @@
 <!doctype html>
 <html lang="ru">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width,initial-scale=1" />
-	<title>Klimov Ilya</title>
-	<link rel="stylesheet" href="css/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Санаинспайр — Превью</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-	<header class="site-header" role="banner">
-		<button class="nav-toggle" aria-controls="main-nav-list" aria-expanded="false" aria-label="Открыть меню">Меню</button>
-		<nav class="main-nav" role="navigation" aria-label="Главное меню">
-			<ul id="main-nav-list" class="nav-list">
-				<li><a href="#about">обо мне</a></li>
-				<li><a href="#work">работа</a></li>
-				<li><a href="#contacts">контакты</a></li>
-			</ul>
-		</nav>
-	</header>
+  <header class="site-header" role="banner">
+    <button class="nav-toggle" aria-controls="main-nav-list" aria-expanded="false" aria-label="Открыть меню">Меню</button>
+    <nav class="main-nav" role="navigation" aria-label="Главное меню">
+      <ul id="main-nav-list" class="nav-list">
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="about.html">Обо мне</a></li>
+        <li><a href="#work">Работы</a></li>
+        <li><a href="#contacts">Контакты</a></li>
+      </ul>
+    </nav>
+  </header>
 
-	<main>
-		<section id="hero" class="hero" role="region" aria-label="Главный блок">
-			<div class="hero-content">
-				<div class="hero-text">
-					<h1>ОБО МНЕ</h1>
-					<p>Меня зовут Илья. Я студент из Екатеринбурга, занимаюсь графическим и UI/UX дизайном. Разрабатываю сайт для дисциплинны третьего курса "Технологиский практикум по профилю"</p>
-				</div>
-				<a class="hero-image-link" href="images/milenka2.JPG" target="parent">
-					<img src="images/milenka.jpg" alt="Изображение" />
-				</a>
-			</div>
-		</section>
+  <main>
+    <section class="hero--sananes" id="hero">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <h1 class="title-ru">ДИЗАЙНЕР</h1>
+          <h2 class="title-en">DESIGNER</h2>
+        </div>
+        <div class="hero-media">
+          <!-- inline SVG filter for displacement-based distortion -->
+          <svg style="position:absolute;width:0;height:0;" aria-hidden="true">
+            <defs>
+              <filter id="distort">
+                <feTurbulence id="fturb" baseFrequency="0" numOctaves="2" seed="2" result="turb" />
+                <feDisplacementMap id="fdisp" in="SourceGraphic" in2="turb" scale="0" xChannelSelector="R" yChannelSelector="G" />
+              </filter>
+            </defs>
+          </svg>
+          <img class="kit" src="images/ktya.jpg" alt="kit preview" tabindex="0" style="width:420px;max-width:100%;border-radius:12px;display:block;box-shadow:0 12px 32px rgba(0,0,0,0.35);filter:url(#distort);">
+        </div>
+      </div>
+    </section>
 
-		<!-- галлерея -->
-		<section id="projects" class="projects-section" aria-label="Проекты">
-			<h2 class="section-title">ПРОЕКТЫ</h2>
+    <section id="work" class="section--split" aria-label="Работы">
+      <div>
+        <h2>Работы</h2>
+        <p>Короткие описания и визуальные карточки, которые можно прокручивать или смотреть в сетке.</p>
+        <!-- DomeGallery React mount -->
+        <div id="dome-root" style="margin-top:28px;"></div>
+      </div>
+      <aside>
+        <h3>О проекте</h3>
+        <p>Короткая заметка о направлении работ: нетривиальная типографика, размытое пространство, акцент на простоту.</p>
+        <p><a class="cta" href="#contacts">Написать</a></p>
+      </aside>
+    </section>
 
-			<div class="projects-carousel" aria-roledescription="carousel">
-				<div class="projects-viewport" tabindex="0" aria-label="Галерея проектов">
-					<ul class="projects-track" role="list">
-						<li role="listitem">
-							<a class="project-card" href="projects/project1.html" target="parent"
-								data-title="ВРЕМЕНА ГОДА"
-								data-desc="Разработка айдентики и веб-сайта для выставки">
-								<img src="images/seasons/6.png" alt="ВРЕМЕНА ГОДА — миниатюра">
-								<h3>ВРЕМЕНА ГОДА</h3>
-							</a>
-						</li>
-						<li role="listitem">
-							<a class="project-card" href="projects/project2.html"
-								data-title="MOZAEKB"
-								data-desc="Краткое описание проекта 2.">
-								<img src="images/project2.jpg" alt="MOZAEKB — миниатюра">
-								<h3>MOZAEKB</h3>
-							</a>
-						</li>
-						<li role="listitem">
-							<a class="project-card" href="projects/project3.html"
-								data-title="SIROB"
-								data-desc="Краткое описание проекта 3.">
-								<img src="images/project3.jpg" alt="SIROB — миниатюра">
-								<h3>SIROB</h3>
-							</a>
-						</li>
-						<li role="listitem">
-							<a class="project-card" href="projects/project4.html"
-								data-title="ИЛЛЮСТРАЦИИ"
-								data-desc="Краткое описание проекта 4.">
-								<img src="images/project4.jpg" alt="ИЛЛЮСТРАЦИИ — миниатюра">
-								<h3>ИЛЛЮСТРАЦИИ</h3>
-							</a>
-						</li>
-						<li role="listitem">
-							<a class="project-card" href="projects/project5.html"
-								data-title="Проект 5"
-								data-desc="Краткое описание проекта 5.">
-								<img src="images/project5.jpg" alt="Проект 5 — миниатюра">
-								<h3>Проект 5</h3>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</section>
+    <section id="contacts" style="padding:48px var(--gap);">
+      <h2>Контакты</h2>
+      <p>Email: <a href="mailto:kia201204@gmail.com">kia201204@gmail.com</a></p>
+    </section>
+  </main>
 
-	</main>
+  <footer class="site-footer--alt" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <p>© 2025 — портфолио</p>
+      </div>
+      <div class="footer-right">
+        <p>tg: @ildeey</p>
+      </div>
+    </div>
+  </footer>
 
-	<footer class="site-footer" role="contentinfo">
-		<div class="footer-inner">
-			<div class="footer-left">
-				<address>
-					Телефон: <a href="tel:+79177000960">+7 (917) 700-09-60</a><br/>
-					Email: <a href="mailto:kia201204@gmail.com">kia201204@gmail.com</a>
-				</address>
-			</div>
-			<div class="footer-right">
-				<p>© 2025 Klimov Ilya. Все права защищены.</p>
-				<p>tg: @ildeey.</p>
-			</div>
-		</div>
-	</footer>
+  <script src="script.js" defer></script>
+  <!-- React (UMD), ReactDOM and Babel for in-browser JSX (dev only) -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-	<script src="script.js" defer></script>
+  <link rel="stylesheet" href="css/dome-gallery.css">
+
+  <script type="text/babel">
+  // DomeGallery: hover-driven, uses project data from the .projects-grid
+  const { useState, useRef, useEffect, useMemo } = React;
+
+  const DEFAULT_IMAGES = [
+    'https://picsum.photos/300/420?random=11',
+    'https://picsum.photos/300/420?random=12',
+    'https://picsum.photos/300/420?random=13',
+    'https://picsum.photos/300/420?random=14',
+    'https://picsum.photos/300/420?random=15',
+    'https://picsum.photos/300/420?random=16'
+  ];
+
+  function buildItems(pool, segX = 5, segY = 3) {
+    const xCols = Array.from({ length: segX }, (_, i) => -Math.floor(segX / 2) + i);
+    const ys = Array.from({ length: segY }, (_, i) => -Math.floor(segY / 2) + i);
+    const coords = xCols.flatMap(x => ys.map(y => ({ x, y })));
+    const normalized = pool.map(s => (typeof s === 'string' ? { src: s, alt: '' } : s));
+    return coords.map((c, i) => ({ ...c, idx: i }));
+  }
+
+  function pickRandomIndices(count, max) {
+    const set = new Set();
+    while (set.size < Math.min(count, max)) set.add(Math.floor(Math.random() * max));
+    return Array.from(set);
+  }
+
+  function DomeGallerySimple({ images = DEFAULT_IMAGES, projects = [] }){
+    const rootRef = useRef(null);
+    const sphereRef = useRef(null);
+    const rafRef = useRef(null);
+    const rotRef = useRef({ x: 0, y: 0 });
+    const targetRef = useRef({ x: 0, y: 0 });
+    const [renderTick, setRenderTick] = useState(0);
+
+    const items = useMemo(() => buildItems(images, 11, 5), [images]);
+
+    // pick 5 random tile indices to host project cards
+    const projectPlacement = useMemo(() => {
+      const total = items.length;
+      const indices = pickRandomIndices(5, total);
+      const map = new Map();
+      indices.forEach((idx, i) => { map.set(idx, projects[i] || projects[i % projects.length] || null); });
+      return map;
+    }, [items, projects]);
+
+    useEffect(() => {
+      const el = rootRef.current; if(!el) return;
+
+      function onMove(e){
+        const rect = el.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width;
+        const py = (e.clientY - rect.top) / rect.height;
+        // limit influence so rotation only when pointer is inside
+        const mx = (px - 0.5) * 2; // -1..1
+        const my = (py - 0.5) * 2;
+        targetRef.current.y = mx * 40; // yaw
+        targetRef.current.x = -my * 12; // pitch limited
+      }
+
+      function onLeave(){ targetRef.current = { x: 0, y: 0 }; }
+
+      el.addEventListener('pointermove', onMove, { passive: true });
+      el.addEventListener('pointerleave', onLeave);
+      el.addEventListener('pointercancel', onLeave);
+
+      // smooth RAF loop
+      const step = () => {
+        const cur = rotRef.current;
+        const t = 0.12;
+        cur.x += (targetRef.current.x - cur.x) * t;
+        cur.y += (targetRef.current.y - cur.y) * t;
+        rotRef.current = cur;
+        if (sphereRef.current) sphereRef.current.style.transform = `translateZ(-var(--radius,300px)) rotateX(${cur.x}deg) rotateY(${cur.y}deg)`;
+        rafRef.current = requestAnimationFrame(step);
+        // force React re-render occasionally for new inline styles
+        if ((Math.random() < 0.02)) setRenderTick(r => r + 1);
+      };
+      rafRef.current = requestAnimationFrame(step);
+
+      return () => {
+        el.removeEventListener('pointermove', onMove);
+        el.removeEventListener('pointerleave', onLeave);
+        el.removeEventListener('pointercancel', onLeave);
+        cancelAnimationFrame(rafRef.current);
+      };
+    }, [items]);
+
+    return (
+      <div className="sphere-root dome-large" ref={rootRef}>
+        <div className="sphere-main">
+          <div className="stage">
+            <div className="sphere" ref={sphereRef}>
+              {items.map((it,i)=>{
+                const rx = it.y * 8;
+                const ry = it.x * 12;
+                const proj = projectPlacement.get(i);
+                const hasProj = !!proj && (proj.title || proj.img || proj.desc);
+                return (
+                  <div key={i} className={"item" + (hasProj ? ' item--project' : ' item--empty')} style={{transform:`rotateY(${ry}deg) rotateX(${rx}deg) translateZ(var(--radius,300px))`}}>
+                    <div className="item__image" role="button" tabIndex={0} aria-label={proj?.title || 'tile'}>
+                      {hasProj && proj.img ? <img src={proj.img} alt={proj.title||''} draggable={false} /> : null}
+                      {hasProj ? (
+                        <div className="project-overlay">
+                          <h4>{proj.title}</h4>
+                          <p>{proj.desc}</p>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // gather existing projects from the DOM to populate gallery
+  const projectEls = Array.from(document.querySelectorAll('.projects-grid .project-card'));
+  const projects = projectEls.map(el => ({ img: el.querySelector('img')?.src || '', title: el.querySelector('h3')?.textContent || '', desc: el.querySelector('p')?.textContent || '' }));
+  // if less than 5, add placeholders
+  while(projects.length < 5) projects.push({ img: '', title: 'Проект', desc: 'Описание проекта' });
+
+  ReactDOM.createRoot(document.getElementById('dome-root')).render(React.createElement(DomeGallerySimple, { projects }));
+  </script>
 </body>
 </html>

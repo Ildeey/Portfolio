@@ -1,0 +1,29 @@
+/* Simplified styles for the inlined DomeGallery component */
+.sphere-root{
+  width:100%;
+  max-width:none;
+  margin:0 auto;
+  --radius: 360px;
+  perspective:1400px;
+}
+.sphere-root.dome-large{ height:82vh; }
+.sphere-main{ height:100%; padding:6vh 6px 24px; }
+.stage{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+.sphere{ width:100%; max-width:2000px; height:78vh; position:relative; transform-style:preserve-3d; transition:transform 400ms cubic-bezier(.2,.8,.2,1); }
+.item{ position:absolute; left:50%; top:50%; width:240px; height:320px; margin-left:-110px; margin-top:-160px; transform-origin:center center; transition:transform 320ms ease, filter 250ms ease, opacity 250ms ease; }
+.item__image{ width:100%; height:100%; border-radius:18px; overflow:hidden; box-shadow:0 22px 48px rgba(0, 0, 0, 0.36); background:#ffffff; display:flex; align-items:flex-end; }
+.item__image img{ width:100%; height:100%; object-fit:cover; display:block; }
+.item__image:focus{ outline:2px solid rgba(255,255,255,0.12); }
+.item:hover .item__image{ transform:translateY(-6px) scale(1.03); box-shadow:0 28px 60px rgba(0,0,0,0.42); }
+
+.item--empty .item__image{ background:#ffffff; }
+.project-overlay{ position:absolute; left:0; right:0; bottom:0; padding:12px 14px; background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.78) 100%); color:#fff; font-family:inherit; }
+.project-overlay h4{ margin:0 0 6px 0; font-size:16px; }
+.project-overlay p{ margin:0; font-size:13px; opacity:0.95; }
+
+/* make it responsive */
+@media (max-width:900px){
+  .item{ width:160px; height:230px; margin-left:-80px; margin-top:-115px }
+  .sphere{ height:66vh }
+}
+
