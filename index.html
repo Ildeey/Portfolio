@@ -1,211 +1,439 @@
-<!doctype html>
-<html lang="ru">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Санаинспайр — Превью</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KLIMOV ILYA</title>
+  <meta name="description" content="Designer короче">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="site-header" role="banner">
-    <button class="nav-toggle" aria-controls="main-nav-list" aria-expanded="false" aria-label="Открыть меню">Меню</button>
-    <nav class="main-nav" role="navigation" aria-label="Главное меню">
-      <ul id="main-nav-list" class="nav-list">
-        <li><a href="index.html">Главная</a></li>
-        <li><a href="about.html">Обо мне</a></li>
-        <li><a href="#work">Работы</a></li>
-        <li><a href="#contacts">Контакты</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <main>
-    <section class="hero--sananes" id="hero">
-      <div class="hero-inner">
-        <div class="hero-copy">
-          <h1 class="title-ru">ДИЗАЙНЕР</h1>
-          <h2 class="title-en">DESIGNER</h2>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="header-info">
+        <div class="location">
+              <p>Russian Federation</p>
+              <p>Работаю глобально</p>
         </div>
-        <div class="hero-media">
-          <!-- inline SVG filter for displacement-based distortion -->
-          <svg style="position:absolute;width:0;height:0;" aria-hidden="true">
-            <defs>
-              <filter id="distort">
-                <feTurbulence id="fturb" baseFrequency="0" numOctaves="2" seed="2" result="turb" />
-                <feDisplacementMap id="fdisp" in="SourceGraphic" in2="turb" scale="0" xChannelSelector="R" yChannelSelector="G" />
-              </filter>
-            </defs>
-          </svg>
-          <img class="kit" src="images/ktya.jpg" alt="kit preview" tabindex="0" style="width:420px;max-width:100%;border-radius:12px;display:block;box-shadow:0 12px 32px rgba(0,0,0,0.35);filter:url(#distort);">
-        </div>
-      </div>
-    </section>
-
-    <section id="work" class="section--split" aria-label="Работы">
-      <div>
-        <h2>Работы</h2>
-        <p>Короткие описания и визуальные карточки, которые можно прокручивать или смотреть в сетке.</p>
-        <!-- DomeGallery React mount -->
-        <div id="dome-root" style="margin-top:28px;"></div>
-      </div>
-      <aside>
-        <h3>О проекте</h3>
-        <p>Короткая заметка о направлении работ: нетривиальная типографика, размытое пространство, акцент на простоту.</p>
-        <p><a class="cta" href="#contacts">Написать</a></p>
-      </aside>
-    </section>
-
-    <section id="contacts" style="padding:48px var(--gap);">
-      <h2>Контакты</h2>
-      <p>Email: <a href="mailto:kia201204@gmail.com">kia201204@gmail.com</a></p>
-    </section>
-  </main>
-
-  <footer class="site-footer--alt" role="contentinfo">
-    <div class="footer-inner">
-      <div class="footer-left">
-        <p>© 2025 — портфолио</p>
-      </div>
-      <div class="footer-right">
-        <p>tg: @ildeey</p>
+        <a href="#hero" class="logo">Климов Илья</a>
+        <div class="cta-wrapper">
+            <a href="work.html" class="btn-primary" target="_blank" rel="noopener">
+              <span>Доступен к работе</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </a>
+          </div>
       </div>
     </div>
-  </footer>
+  </header>
 
-  <script src="script.js" defer></script>
-  <!-- React (UMD), ReactDOM and Babel for in-browser JSX (dev only) -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <link rel="stylesheet" href="css/dome-gallery.css">
-
-  <script type="text/babel">
-  // DomeGallery: hover-driven, uses project data from the .projects-grid
-  const { useState, useRef, useEffect, useMemo } = React;
-
-  const DEFAULT_IMAGES = [
-    'https://picsum.photos/300/420?random=11',
-    'https://picsum.photos/300/420?random=12',
-    'https://picsum.photos/300/420?random=13',
-    'https://picsum.photos/300/420?random=14',
-    'https://picsum.photos/300/420?random=15',
-    'https://picsum.photos/300/420?random=16'
-  ];
-
-  function buildItems(pool, segX = 5, segY = 3) {
-    const xCols = Array.from({ length: segX }, (_, i) => -Math.floor(segX / 2) + i);
-    const ys = Array.from({ length: segY }, (_, i) => -Math.floor(segY / 2) + i);
-    const coords = xCols.flatMap(x => ys.map(y => ({ x, y })));
-    const normalized = pool.map(s => (typeof s === 'string' ? { src: s, alt: '' } : s));
-    return coords.map((c, i) => ({ ...c, idx: i }));
-  }
-
-  function pickRandomIndices(count, max) {
-    const set = new Set();
-    while (set.size < Math.min(count, max)) set.add(Math.floor(Math.random() * max));
-    return Array.from(set);
-  }
-
-  function DomeGallerySimple({ images = DEFAULT_IMAGES, projects = [] }){
-    const rootRef = useRef(null);
-    const sphereRef = useRef(null);
-    const rafRef = useRef(null);
-    const rotRef = useRef({ x: 0, y: 0 });
-    const targetRef = useRef({ x: 0, y: 0 });
-    const [renderTick, setRenderTick] = useState(0);
-
-    const items = useMemo(() => buildItems(images, 11, 5), [images]);
-
-    // pick 5 random tile indices to host project cards
-    const projectPlacement = useMemo(() => {
-      const total = items.length;
-      const indices = pickRandomIndices(5, total);
-      const map = new Map();
-      indices.forEach((idx, i) => { map.set(idx, projects[i] || projects[i % projects.length] || null); });
-      return map;
-    }, [items, projects]);
-
-    useEffect(() => {
-      const el = rootRef.current; if(!el) return;
-
-      function onMove(e){
-        const rect = el.getBoundingClientRect();
-        const px = (e.clientX - rect.left) / rect.width;
-        const py = (e.clientY - rect.top) / rect.height;
-        // limit influence so rotation only when pointer is inside
-        const mx = (px - 0.5) * 2; // -1..1
-        const my = (py - 0.5) * 2;
-        targetRef.current.y = mx * 40; // yaw
-        targetRef.current.x = -my * 12; // pitch limited
-      }
-
-      function onLeave(){ targetRef.current = { x: 0, y: 0 }; }
-
-      el.addEventListener('pointermove', onMove, { passive: true });
-      el.addEventListener('pointerleave', onLeave);
-      el.addEventListener('pointercancel', onLeave);
-
-      // smooth RAF loop
-      const step = () => {
-        const cur = rotRef.current;
-        const t = 0.12;
-        cur.x += (targetRef.current.x - cur.x) * t;
-        cur.y += (targetRef.current.y - cur.y) * t;
-        rotRef.current = cur;
-        if (sphereRef.current) sphereRef.current.style.transform = `translateZ(-var(--radius,300px)) rotateX(${cur.x}deg) rotateY(${cur.y}deg)`;
-        rafRef.current = requestAnimationFrame(step);
-        // force React re-render occasionally for new inline styles
-        if ((Math.random() < 0.02)) setRenderTick(r => r + 1);
-      };
-      rafRef.current = requestAnimationFrame(step);
-
-      return () => {
-        el.removeEventListener('pointermove', onMove);
-        el.removeEventListener('pointerleave', onLeave);
-        el.removeEventListener('pointercancel', onLeave);
-        cancelAnimationFrame(rafRef.current);
-      };
-    }, [items]);
-
-    return (
-      <div className="sphere-root dome-large" ref={rootRef}>
-        <div className="sphere-main">
-          <div className="stage">
-            <div className="sphere" ref={sphereRef}>
-              {items.map((it,i)=>{
-                const rx = it.y * 8;
-                const ry = it.x * 12;
-                const proj = projectPlacement.get(i);
-                const hasProj = !!proj && (proj.title || proj.img || proj.desc);
-                return (
-                  <div key={i} className={"item" + (hasProj ? ' item--project' : ' item--empty')} style={{transform:`rotateY(${ry}deg) rotateX(${rx}deg) translateZ(var(--radius,300px))`}}>
-                    <div className="item__image" role="button" tabIndex={0} aria-label={proj?.title || 'tile'}>
-                      {hasProj && proj.img ? <img src={proj.img} alt={proj.title||''} draggable={false} /> : null}
-                      {hasProj ? (
-                        <div className="project-overlay">
-                          <h4>{proj.title}</h4>
-                          <p>{proj.desc}</p>
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                );
-              })}
+  <!-- Hero Section -->
+  <section id="hero" class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-left">
+          <div class="hero-title-group">
+            <div class="badge">01</div>
+            <h1 class="hero-title">DESIGNER</h1>
+          </div>
+          <div>
+            <img src="images/kit.png" alt="kit">
+          </div>
+          <div class="hero-title-group">
+            <div class="badge">03</div>
+            <h2 class="hero-title">ДИЗАЙНЕР</h2>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="hero-info">
+            <div class="meta">
+              <p class="meta-text">V1.0</p>
+              <p class="meta-text">23.12.25</p>
             </div>
           </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  </section>
 
-  // gather existing projects from the DOM to populate gallery
-  const projectEls = Array.from(document.querySelectorAll('.projects-grid .project-card'));
-  const projects = projectEls.map(el => ({ img: el.querySelector('img')?.src || '', title: el.querySelector('h3')?.textContent || '', desc: el.querySelector('p')?.textContent || '' }));
-  // if less than 5, add placeholders
-  while(projects.length < 5) projects.push({ img: '', title: 'Проект', desc: 'Описание проекта' });
+  <!-- About Section -->
+  <section id="about" class="about">
+    <div class="logo-badge">N</div>
+    <div class="container">
+      <p class="section-label">ОБО МНЕ</p>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>Графический дизайнер, помогаю брендам и людям эффективно привлекать аудиторию через уникальные визуальные решения.</p>
+          <p>У меня есть художественная база и опыт в разных областях дизайна, что позволяет гибко подходить к проектам.</p>
+          <p>Студент <a href="https://еаси.екатеринбург.рф/" class="link" target="_blank">ЕАСИ</a> профиля "Цифровое искусство".</p>
+          <p>В поиске новых задач и возможностей.</p>
+          <p>Работаю в Photoshop, Illustrator, Figma, Blender и других профессиональных инструментах. Я исследую современные тренды и адаптирую их под задачи клиента.</p>
+          <p>Родился и вырос в Йошкар-Оле, Российская федерация.</p>
+        </div>
 
-  ReactDOM.createRoot(document.getElementById('dome-root')).render(React.createElement(DomeGallerySimple, { projects }));
-  </script>
+        <div class="about-sidebar">
+          <div class="social-links">
+            <a href="https://github.com/Ildeey" class="social-link" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              GitHub
+            </a>
+            <a href="https://www.behance.net/lizzyboy" class="social-link" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Behance
+            </a>
+            <a href="https://t.me/ildeey" class="social-link" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Telegram
+            </a>
+          </div>
+
+          <div class="info-block">
+            <p>20 декабря, 2004</p>
+            <p>Российская федерация</p>
+            <p>Екатеринбург</p>
+          </div>
+
+          <div class="coordinates">
+            <p>56.837471° S </p>
+            <p>60.597060° W</p>
+          </div>
+
+          <div class="barcode-wrapper">
+            <div class="barcode-text">YSWYETWKSY_62CLB</div>
+            <svg class="barcode" width="280" height="60" viewBox="0 0 280 60"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work Section -->
+  <section id="work" class="work">
+    <div class="container">
+      <div class="work-header">
+        <h2 class="section-title">ПРОЕКТЫ</h2>
+        <div class="work-stats">
+          <p>ПРОЕКТОВ: &gt; 10</p>
+          <p>ПОЛЬЗОВАТЕЛЕЙ: 1.0K+</p>
+          <p>ОЦЕНОК: 100+</p>
+        </div>
+      </div>
+
+      <div class="featured-projects">
+        <a href="#" class="project-card">
+          <div class="project-image">
+            <img src="images/vremena.png" alt="Vremena goda">
+          </div>
+          <div class="project-content">
+            <div class="project-info">
+              <p class="project-year">2025</p>
+              <h3 class="project-title">ВРЕМЕНА ГОДА</h3>
+              <p class="project-description">Дизайн айдентики и сайт для цифровой инсталляции "Четыре" в рамках премьеры спектакля в театре.</p>
+            </div>
+            <div class="project-view">[ View ]</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="project-list">
+        <div class="project-item">
+          <div class="project-item-info">
+            <span class="project-item-year">2024</span>
+            <span class="project-item-name">TLD Records</span>
+            <span class="project-item-role">Designer & Developer</span>
+          </div>
+          <span class="project-item-view">[ View ]</span>
+        </div>
+        <div class="project-item">
+          <div class="project-item-info">
+            <span class="project-item-year">2023</span>
+            <span class="project-item-name">Adaptia</span>
+            <span class="project-item-role">Lead Designer & Developer</span>
+          </div>
+          <span class="project-item-view">[ View ]</span>
+        </div>
+        <div class="project-item">
+          <div class="project-item-info">
+            <span class="project-item-year">2015</span>
+            <span class="project-item-name">Conflux</span>
+            <span class="project-item-role">Co-Founder</span>
+          </div>
+          <span class="project-item-view">[ View ]</span>
+        </div>
+        <div class="project-item">
+          <div class="project-item-info">
+            <span class="project-item-year">2020</span>
+            <span class="project-item-name">Bookables</span>
+            <span class="project-item-role">Co-Founder</span>
+          </div>
+          <span class="project-item-view">[ View ]</span>
+        </div>
+        <div class="project-item">
+          <div class="project-item-info">
+            <span class="project-item-year">2022</span>
+            <span class="project-item-name">Supaflags</span>
+            <span class="project-item-role">Co-Founder</span>
+          </div>
+          <span class="project-item-view">[ View ]</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section id="gallery" class="gallery">
+    <div class="container">
+      <div class="gallery-header">
+        <h2 class="section-title">ГАЛЛЕРЕЯ</h2>
+        <p class="section-label">PORTFOLIO PROJECTS</p>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div class="gallery-grid">
+        <!-- 5 filled projects -->
+        <div class="gallery-card" data-project-id="1">
+          <div class="gallery-image-wrapper">
+            <img src="images/kartinka.jpg" alt="" class="gallery-image">
+            <div class="gallery-overlay"></div>
+          </div>
+          <div class="gallery-content">
+            <h3 class="gallery-title">TB Auctions</h3>
+          </div>
+        </div>
+
+        <div class="gallery-card" data-project-id="2">
+          <div class="gallery-image-wrapper">
+            <img src="images/2.jpg" alt="Rovu Project" class="gallery-image">
+            <div class="gallery-overlay"></div>
+          </div>
+          <div class="gallery-content">
+            <h3 class="gallery-title">Rovu</h3>
+          </div>
+        </div>
+
+        <div class="gallery-card" data-project-id="3">
+          <div class="gallery-image-wrapper">
+            <img src="images/kit.jpg" alt="TLD Records Project" class="gallery-image">
+            <div class="gallery-overlay"></div>
+          </div>
+          <div class="gallery-content">
+            <h3 class="gallery-title">TLD Records</h3>
+          </div>
+        </div>
+
+        <div class="gallery-card" data-project-id="4">
+          <div class="gallery-image-wrapper">
+            <img src="images/ktya.jpg" alt="Adaptia Project" class="gallery-image">
+            <div class="gallery-overlay"></div>
+          </div>
+          <div class="gallery-content">
+            <h3 class="gallery-title">Adaptia</h3>
+          </div>
+        </div>
+
+        <div class="gallery-card" data-project-id="5">
+          <div class="gallery-image-wrapper">
+            <img src="images/1.jpg" alt="Conflux Project" class="gallery-image">
+            <div class="gallery-overlay"></div>
+          </div>
+          <div class="gallery-content">
+            <h3 class="gallery-title">Conflux</h3>
+          </div>
+        </div>
+
+        <!-- 10 empty cards for form submission -->
+        <div class="gallery-card empty" data-project-id="6">
+          <div class="gallery-image-wrapper gallery-empty">
+            <div class="empty-placeholder">+</div>
+          </div>
+          <div class="gallery-content">
+            <h3 class="gallery-title">Новый проект</h3>
+          </div>
+        </div>
+
+        <div class="gallery-card empty" data-project-id="7">
+          <div class="gallery-image-wrapper gallery-empty">
+            <div class="empty-placeholder">+</div>
+          </div>
+          <div class="gallery-content">
+            <h3 class="gallery-title">Новый проект</h3>
+          </div>
+        </div>
+
+        <div class="gallery-card empty" data-project-id="8">
+          <div class="gallery-image-wrapper gallery-empty">
+            <div class="empty-placeholder">+</div>
+          </div>
+          <div class="gallery-content">
+            <h3 class="gallery-title">Новый проект</h3>
+          </div>
+        </div>
+
+        <div class="gallery-card empty" data-project-id="9">
+          <div class="gallery-image-wrapper gallery-empty">
+            <div class="empty-placeholder">+</div>
+          </div>
+          <div class="gallery-content">
+            <h3 class="gallery-title">Новый проект</h3>
+          </div>
+        </div>
+
+        <div class="gallery-card empty" data-project-id="10">
+          <div class="gallery-image-wrapper gallery-empty">
+            <div class="empty-placeholder">+</div>
+          </div>
+          <div class="gallery-content">
+            <h3 class="gallery-title">Новый проект</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Project Form -->
+      <div class="add-project-form">
+        <h3 class="form-title">Добавить новый проект</h3>
+        <form id="projectForm">
+          <div class="form-group">
+            <label for="projectName">Название проекта</label>
+            <input type="text" id="projectName" name="projectName" required>
+          </div>
+
+          <div class="form-group">
+            <label for="projectImage">URL изображения</label>
+            <input type="url" id="projectImage" name="projectImage" required>
+          </div>
+
+          <div class="form-group">
+            <label for="projectDescription">Описание (дополнительно)</label>
+            <textarea id="projectDescription" name="projectDescription" rows="3"></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">Добавить в галлерею</button>
+        </form>
+        <div id="formMessage" class="form-message"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience Section -->
+  <section id="experience" class="experience">
+    <div class="container">
+      <h2 class="section-title">ОПЫТ</h2>
+
+      <div class="experience-list">
+        <div class="experience-item">
+          <p class="experience-period">2023</p>
+          <h3 class="experience-title">Инженер, технический специалист</h3>
+          <p class="experience-company">МИСКА КИСОК - НЕ ТЕМНО</p>
+        </div>
+        <div class="experience-item">
+          <p class="experience-period">2025</p>
+          <h3 class="experience-title">Дизайнер проекта / <br>Разработчик программного обеспечения для инсталляции "МОХ"</h3>
+          <p class="experience-company">МИСКА КИСОК - PlayDigitalArt</p>
+        </div>
+        <div class="experience-item">
+          <p class="experience-period">2025</p>
+          <h3 class="experience-title">Арт-директор выставки "Времена года"</h3>
+          <p class="experience-company">Разработка и ведение команды дизайнеров на выставке</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Stack Section -->
+  <section id="tech" class="tech">
+    <div class="container">
+      <div class="tech-grid">
+        <div class="tech-header">
+          <h2 class="tech-title">ТЕХНИЧЕСКИЙ СТЕК</h2>
+        </div>
+        <div class="tech-list">
+          <p>Figma</p>
+          <p>HTML</p>
+          <p>CSS</p>
+          <p>Next.js</p>
+          <p>Photoshop</p>
+          <p>Illustrator</p>
+          <p>GSAP</p>
+          <p>Tilda</p>
+        </div>
+      </div>
+
+      <div class="barcode-wrapper">
+        <div class="barcode-text">ALXMHVNBTV86D)IE</div>
+        <svg class="barcode" width="280" height="60" viewBox="0 0 280 60"></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer CTA -->
+  <section id="contact" class="footer-cta">
+    <div class="vertical-text left">01010101</div>
+    <div class="vertical-text right">01010101</div>
+    <div class="container">
+      <div class="cta-content">
+        <p class="cta-binary">01010101010101010101</p>
+        <h2 class="cta-title">НАНЯТЬ РАБОТНИКА</h2>
+      </div>
+      <a href="" class="cta-link" target="_blank" rel="noopener">
+        <span>НАПИСАТЬ МНЕ</span>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <path d="M4 24H44M44 24L24 4M44 24L24 44" stroke="currentColor" stroke-width="4"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    
+    <div class="container">
+      <div class="footer-content">
+        <p class="footer-text">Klimov Ilya © Copyright 2025</p>
+        <p class="footer-text">Все права защищены</p>
+        <div class="footer-links">
+          <a href="https://github.com/sananes" class="footer-link" target="_blank" rel="noopener">
+            GitHub
+          </a>
+          <a href="https://instagram.com/aasananes" class="footer-link" target="_blank" rel="noopener">
+            Instagram
+          </a>
+          <a href="https://www.linkedin.com/in/aasananes/" class="footer-link" target="_blank" rel="noopener">
+            LinkedIn
+          </a>
+          <a href="https://dribbble.com/sananes" class="footer-link" target="_blank" rel="noopener">
+            Dribbble
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+
+  <!-- Modal for image viewing -->
+  <div id="imageModal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <div class="modal-body">
+        <img id="modalImage" src="" alt="Project image" class="modal-image">
+        <div class="modal-info">
+          <h2 id="modalTitle"></h2>
+          <p id="modalDescription"></p>
+        </div>
+      </div>
+      <div class="modal-navigation">
+        <button class="modal-btn modal-prev">&larr; Previous</button>
+        <button class="modal-btn modal-next">Next &rarr;</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
