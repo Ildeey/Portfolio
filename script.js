@@ -1,4 +1,6 @@
-// Generate barcodes
+/* ============================================
+   BARCODE GENERATION
+   ============================================ */
 function generateBarcode(svg) {
   const width = svg.getAttribute('width');
   const height = svg.getAttribute('height');
@@ -17,9 +19,11 @@ function generateBarcode(svg) {
     svg.appendChild(rect);
   }
 }
-
-// Initialize barcodes
+/* ============================================
+   SMOOTH SCROLLING & PAGE INITIALIZATION
+   ============================================ */
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize barcodes
   const barcodes = document.querySelectorAll('.barcode');
   barcodes.forEach(barcode => {
     generateBarcode(barcode);
@@ -41,25 +45,22 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
-});
 
-// Add scroll animations (optional)
-const observerOptions = {
-  threshold: 0.1,
-  rootMargin: '0px 0px -100px 0px'
-};
+  // Section fade-in animation
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+  };
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
-    }
-  });
-}, observerOptions);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, observerOptions);
 
-// Observe sections for fade-in effect
-document.addEventListener('DOMContentLoaded', function() {
   const sections = document.querySelectorAll('section');
   sections.forEach(section => {
     section.style.opacity = '0';
@@ -69,8 +70,11 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// ==================== Gallery Modal System ====================
+/* ============================================
+   GALLERY DATA & MODAL SYSTEM
+   ============================================ */
 let currentProjectId = null;
+
 const galleryData = {
   1: { title: 'TB Auctions', image: 'images/kartinka.jpg', description: 'E-commerce platform design for auction management' },
   2: { title: 'Rovu', image: 'images/kartinka2.jpg', description: 'Brand identity and digital design system' },
@@ -79,42 +83,9 @@ const galleryData = {
   5: { title: 'Conflux', image: 'images/kit.png', description: 'Tech startup UI/UX design' }
 };
 
-// Gallery card click handler
-document.addEventListener('DOMContentLoaded', function() {
-  const galleryCards = document.querySelectorAll('.gallery-card:not(.empty)');
-  
-  galleryCards.forEach(card => {
-    card.addEventListener('click', function() {
-      const projectId = parseInt(this.getAttribute('data-project-id'));
-      openModal(projectId);
-    });
-  });
-
-  // Modal control handlers
-  const modal = document.getElementById('imageModal');
-  const closeBtn = document.querySelector('.modal-close');
-  const prevBtn = document.querySelector('.modal-prev');
-  const nextBtn = document.querySelector('.modal-next');
-
-  closeBtn.addEventListener('click', closeModal);
-  prevBtn.addEventListener('click', showPrevious);
-  nextBtn.addEventListener('click', showNext);
-
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) {
-      closeModal();
-    }
-  });
-
-  // Keyboard navigation
-  document.addEventListener('keydown', function(e) {
-    if (!modal.classList.contains('active')) return;
-    if (e.key === 'Escape') closeModal();
-    if (e.key === 'ArrowLeft') showPrevious();
-    if (e.key === 'ArrowRight') showNext();
-  });
-});
-
+/* ============================================
+   MODAL FUNCTIONS
+   ============================================ */
 function openModal(projectId) {
   const modal = document.getElementById('imageModal');
   const project = galleryData[projectId];
@@ -172,10 +143,53 @@ function updateNavigationButtons() {
   nextBtn.disabled = currentIndex === projectIds.length - 1;
 }
 
-// ==================== Form Handling ====================
+/* ============================================
+   MODAL EVENT HANDLERS
+   ============================================ */
+document.addEventListener('DOMContentLoaded', function() {
+  const galleryCards = document.querySelectorAll('.gallery-card:not(.empty)');
+  const modal = document.getElementById('imageModal');
+  const closeBtn = document.querySelector('.modal-close');
+  const prevBtn = document.querySelector('.modal-prev');
+  const nextBtn = document.querySelector('.modal-next');
+
+  // Gallery card click handlers
+  galleryCards.forEach(card => {
+    card.addEventListener('click', function() {
+      const projectId = parseInt(this.getAttribute('data-project-id'));
+      openModal(projectId);
+    });
+  });
+
+  // Modal control handlers
+  closeBtn.addEventListener('click', closeModal);
+  prevBtn.addEventListener('click', showPrevious);
+  nextBtn.addEventListener('click', showNext);
+
+  // Close modal on backdrop click
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (!modal.classList.contains('active')) return;
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'ArrowLeft') showPrevious();
+    if (e.key === 'ArrowRight') showNext();
+  });
+});
+
+/* ============================================
+   FORM HANDLING
+   ============================================ */
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('projectForm');
   const formMessage = document.getElementById('formMessage');
+
+  if (!form) return; // Form doesn't exist on this page
 
   form.addEventListener('submit', function(e) {
     e.preventDefault();

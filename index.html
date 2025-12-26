@@ -4,34 +4,52 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KLIMOV ILYA</title>
-  <meta name="description" content="Designer короче">
+  <meta name="description" content="Designer portfolio">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Header -->
+  <!-- ============================================
+       HEADER & NAVIGATION
+       ============================================ -->
   <header class="header">
+    <div class="progressive-blur-container">
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="gradient"></div>
+    </div>
     <div class="container">
-      <div class="header-info">
         <div class="location">
-              <p>Russian Federation</p>
-              <p>Работаю глобально</p>
+          <p>Russian Federation</p>
+          <p>Г. ЕКАТЕРИНБУРГ</p>
         </div>
-        <a href="#hero" class="logo">Климов Илья</a>
-        <div class="cta-wrapper">
-            <a href="work.html" class="btn-primary" target="_blank" rel="noopener">
-              <span>Доступен к работе</span>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
-              </svg>
-            </a>
-          </div>
-      </div>
+        <a href="#hero" class="logo">I. A. KLIMOV</a>
+        <div class="cta-header">
+          <a href="work.html" class="btn-primary" target="_blank" rel="noopener">
+            <span>Доступен к работе</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </a>
+        </div>
     </div>
   </header>
-
-  <!-- Hero Section -->
+  <!-- ============================================
+       HERO SECTION
+       ============================================ -->
   <section id="hero" class="hero">
     <div class="container">
+      <div class="lines">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>        
+      </div>
       <div class="hero-grid">
         <div class="hero-left">
           <div class="hero-title-group">
@@ -57,8 +75,9 @@
       </div>
     </div>
   </section>
-
-  <!-- About Section -->
+  <!-- ============================================
+       ABOUT SECTION
+       ============================================ -->
   <section id="about" class="about">
     <div class="logo-badge">N</div>
     <div class="container">
@@ -102,7 +121,7 @@
           </div>
 
           <div class="coordinates">
-            <p>56.837471° S </p>
+            <p>56.837471° S</p>
             <p>60.597060° W</p>
           </div>
 
@@ -115,7 +134,9 @@
     </div>
   </section>
 
-  <!-- Work Section -->
+  <!-- ============================================
+       WORK & PROJECTS SECTION
+       ============================================ -->
   <section id="work" class="work">
     <div class="container">
       <div class="work-header">
@@ -188,7 +209,9 @@
     </div>
   </section>
 
-  <!-- Gallery Section -->
+  <!-- ============================================
+       GALLERY SECTION
+       ============================================ -->
   <section id="gallery" class="gallery">
     <div class="container">
       <div class="gallery-header">
@@ -196,12 +219,12 @@
         <p class="section-label">PORTFOLIO PROJECTS</p>
       </div>
 
-      <!-- Gallery Grid -->
+      <!-- Gallery Grid - 5 filled projects + 10 empty cards -->
       <div class="gallery-grid">
-        <!-- 5 filled projects -->
+        <!-- Project 1 -->
         <div class="gallery-card" data-project-id="1">
           <div class="gallery-image-wrapper">
-            <img src="images/kartinka.jpg" alt="" class="gallery-image">
+            <img src="images/kartinka.jpg" alt="TB Auctions" class="gallery-image">
             <div class="gallery-overlay"></div>
           </div>
           <div class="gallery-content">
@@ -209,9 +232,10 @@
           </div>
         </div>
 
+        <!-- Project 2 -->
         <div class="gallery-card" data-project-id="2">
           <div class="gallery-image-wrapper">
-            <img src="images/2.jpg" alt="Rovu Project" class="gallery-image">
+            <img src="images/2.jpg" alt="Rovu" class="gallery-image">
             <div class="gallery-overlay"></div>
           </div>
           <div class="gallery-content">
@@ -219,9 +243,10 @@
           </div>
         </div>
 
+        <!-- Project 3 -->
         <div class="gallery-card" data-project-id="3">
           <div class="gallery-image-wrapper">
-            <img src="images/kit.jpg" alt="TLD Records Project" class="gallery-image">
+            <img src="images/kit.jpg" alt="TLD Records" class="gallery-image">
             <div class="gallery-overlay"></div>
           </div>
           <div class="gallery-content">
@@ -229,9 +254,10 @@
           </div>
         </div>
 
+        <!-- Project 4 -->
         <div class="gallery-card" data-project-id="4">
           <div class="gallery-image-wrapper">
-            <img src="images/ktya.jpg" alt="Adaptia Project" class="gallery-image">
+            <img src="images/ktya.jpg" alt="Adaptia" class="gallery-image">
             <div class="gallery-overlay"></div>
           </div>
           <div class="gallery-content">
@@ -239,9 +265,10 @@
           </div>
         </div>
 
+        <!-- Project 5 -->
         <div class="gallery-card" data-project-id="5">
           <div class="gallery-image-wrapper">
-            <img src="images/1.jpg" alt="Conflux Project" class="gallery-image">
+            <img src="images/1.jpg" alt="Conflux" class="gallery-image">
             <div class="gallery-overlay"></div>
           </div>
           <div class="gallery-content">
@@ -249,9 +276,9 @@
           </div>
         </div>
 
-        <!-- 10 empty cards for form submission -->
+        <!-- Empty Cards 6-15 -->
         <div class="gallery-card empty" data-project-id="6">
-          <div class="gallery-image-wrapper gallery-empty">
+          <div class="gallery-image-wrapper">
             <div class="empty-placeholder">+</div>
           </div>
           <div class="gallery-content">
@@ -260,7 +287,7 @@
         </div>
 
         <div class="gallery-card empty" data-project-id="7">
-          <div class="gallery-image-wrapper gallery-empty">
+          <div class="gallery-image-wrapper">
             <div class="empty-placeholder">+</div>
           </div>
           <div class="gallery-content">
@@ -269,7 +296,7 @@
         </div>
 
         <div class="gallery-card empty" data-project-id="8">
-          <div class="gallery-image-wrapper gallery-empty">
+          <div class="gallery-image-wrapper">
             <div class="empty-placeholder">+</div>
           </div>
           <div class="gallery-content">
@@ -278,7 +305,7 @@
         </div>
 
         <div class="gallery-card empty" data-project-id="9">
-          <div class="gallery-image-wrapper gallery-empty">
+          <div class="gallery-image-wrapper">
             <div class="empty-placeholder">+</div>
           </div>
           <div class="gallery-content">
@@ -287,7 +314,7 @@
         </div>
 
         <div class="gallery-card empty" data-project-id="10">
-          <div class="gallery-image-wrapper gallery-empty">
+          <div class="gallery-image-wrapper">
             <div class="empty-placeholder">+</div>
           </div>
           <div class="gallery-content">
@@ -322,7 +349,9 @@
     </div>
   </section>
 
-  <!-- Experience Section -->
+  <!-- ============================================
+       EXPERIENCE SECTION
+       ============================================ -->
   <section id="experience" class="experience">
     <div class="container">
       <h2 class="section-title">ОПЫТ</h2>
@@ -335,7 +364,7 @@
         </div>
         <div class="experience-item">
           <p class="experience-period">2025</p>
-          <h3 class="experience-title">Дизайнер проекта / <br>Разработчик программного обеспечения для инсталляции "МОХ"</h3>
+          <h3 class="experience-title">Дизайнер проекта / Разработчик программного обеспечения для инсталляции "МОХ"</h3>
           <p class="experience-company">МИСКА КИСОК - PlayDigitalArt</p>
         </div>
         <div class="experience-item">
@@ -347,7 +376,9 @@
     </div>
   </section>
 
-  <!-- Tech Stack Section -->
+  <!-- ============================================
+       TECH STACK SECTION
+       ============================================ -->
   <section id="tech" class="tech">
     <div class="container">
       <div class="tech-grid">
@@ -373,17 +404,19 @@
     </div>
   </section>
 
-  <!-- Footer CTA -->
+  <!-- ============================================
+       FOOTER CTA
+       ============================================ -->
   <section id="contact" class="footer-cta">
     <div class="vertical-text left">01010101</div>
     <div class="vertical-text right">01010101</div>
     <div class="container">
       <div class="cta-content">
         <p class="cta-binary">01010101010101010101</p>
-        <h2 class="cta-title">НАНЯТЬ РАБОТНИКА</h2>
+        <h2 class="cta-title">...</h2>
       </div>
       <a href="" class="cta-link" target="_blank" rel="noopener">
-        <span>НАПИСАТЬ МНЕ</span>
+        <span>ПЕРЕЙТИ</span>
         <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
           <path d="M4 24H44M44 24L24 4M44 24L24 44" stroke="currentColor" stroke-width="4"/>
         </svg>
@@ -391,34 +424,44 @@
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
   <footer class="footer">
-    
     <div class="container">
       <div class="footer-content">
         <p class="footer-text">Klimov Ilya © Copyright 2025</p>
         <p class="footer-text">Все права защищены</p>
         <div class="footer-links">
-          <a href="https://github.com/sananes" class="footer-link" target="_blank" rel="noopener">
-            GitHub
-          </a>
-          <a href="https://instagram.com/aasananes" class="footer-link" target="_blank" rel="noopener">
-            Instagram
-          </a>
-          <a href="https://www.linkedin.com/in/aasananes/" class="footer-link" target="_blank" rel="noopener">
-            LinkedIn
-          </a>
-          <a href="https://dribbble.com/sananes" class="footer-link" target="_blank" rel="noopener">
-            Dribbble
-          </a>
+          <a href="https://github.com/Ildeey" class="footer-link" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.behance.net/lizzyboy" class="footer-link" target="_blank" rel="noopener">Behance</a>
+          <a href="https://t.me/ildeey" class="footer-link" target="_blank" rel="noopener">Telegram</a>
         </div>
       </div>
     </div>
   </footer>
 
-  <script src="script.js"></script>
-
-  <!-- Modal for image viewing -->
+  <!-- ============================================
+       MODAL & SCRIPTS
+           <a href="https://github.com/Ildeey" class="social-link" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              GitHub
+            </a>
+            <a href="https://www.behance.net/lizzyboy" class="social-link" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Behance
+            </a>
+            <a href="https://t.me/ildeey" class="social-link" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+              Telegram
+            </a>
+       ============================================ -->
   <div id="imageModal" class="modal">
     <div class="modal-content">
       <button class="modal-close">&times;</button>
@@ -435,5 +478,7 @@
       </div>
     </div>
   </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
