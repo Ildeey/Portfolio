@@ -274,4 +274,88 @@ document.addEventListener('DOMContentLoaded', function() {
       formMessage.className = 'form-message';
     }, 4000);
   }
+
+  /* ============================================
+     VISITOR COUNTER & TIME TRACKING
+     ============================================ */
+  
+  // Initialize visitor counter
+  function initVisitorCounter() {
+    const visitKey = 'portfolio_visits';
+    const startTimeKey = 'portfolio_session_start';
+    const totalTimeKey = 'portfolio_total_time';
+    
+    // Get or initialize visit count
+    let visits = parseInt(localStorage.getItem(visitKey)) || 0;
+    visits++;
+    localStorage.setItem(visitKey, visits);
+    
+    // Initialize session start time if not exists
+    if (!localStorage.getItem(startTimeKey)) {
+      localStorage.setItem(startTimeKey, Date.now());
+    }
+    
+    // Get or initialize total time spent
+    let totalTime = parseInt(localStorage.getItem(totalTimeKey)) || 0;
+    
+    // Update the visit stats display
+    const visitStatsElement = document.getElementById('visit-stats');
+    if (visitStatsElement) {
+      visitStatsElement.textContent = `Визитов: ${visits}`;
+    }
+    
+    // Track time spent on site
+    let sessionStartTime = Date.now();
+    let timeElapsed = 0;
+    
+    const timeInterval = setInterval(() => {
+      timeElapsed++;
+      totalTime++;
+      
+      // Update localStorage
+      localStorage.setItem(totalTimeKey, totalTime);
+      
+      // Update the time display
+      const timeSpentElement = document.getElementById('time-spent');
+      if (timeSpentElement) {
+        timeSpentElement.textContent = formatTime(totalTime);
+      }
+    }, 1000); // Update every second
+    
+    // Format time in human readable format
+    function formatTime(seconds) {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      
+      if (hours > 0) {
+        return `${hours}/${minutes}/${secs}`;
+      } else if (minutes > 0) {
+        return `${minutes}/${secs}`;
+      } else {
+        return `${secs}`;
+      }
+    }
+    
+    // Update time display on page load
+    const timeSpentElement = document.getElementById('time-spent');
+    if (timeSpentElement) {
+      timeSpentElement.textContent = formatTime(totalTime);
+    }
+    
+    // Update time before page unload
+    window.addEventListener('beforeunload', () => {
+      clearInterval(timeInterval);
+      const finalTime = Math.floor((Date.now() - sessionStartTime) / 1000);
+      let currentTotal = parseInt(localStorage.getItem(totalTimeKey)) || 0;
+      localStorage.setItem(totalTimeKey, currentTotal + finalTime);
+    });
+  }
+  
+  // Initialize counter when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initVisitorCounter);
+  } else {
+    initVisitorCounter();
+  }
 });
