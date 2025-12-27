@@ -1221,7 +1221,42 @@ section {
   }
 
   .header {
-    padding: 1.5rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .header .container {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    padding: 0 1rem;
+    align-items: center;
+  }
+
+  .header .location {
+    justify-self: start;
+    font-size: 0.65rem;
+    line-height: 14px;
+  }
+
+  .header .logo {
+    justify-self: center;
+    font-size: 1.2rem;
+  }
+
+  .header .cta-header {
+    justify-self: end;
+    font-size: 0.75rem;
+  }
+
+  .header .cta-header .btn-primary {
+    padding: 0.5rem 0.75rem;
+    gap: 0.3rem;
+    display: flex;
+    font-size: 0.7rem;
+  }
+
+  .header .cta-header span {
+    display: inline;
+    white-space: nowrap;
   }
 
   .hero-grid,
@@ -1232,11 +1267,48 @@ section {
   }
 
   .hero {
-    padding: 3rem 0 5rem;
+    padding: 0;
+    min-height: 100vh;
+    height: 100vh;
   }
 
   .hero-title {
-    font-size: 3rem;
+    font-size: 2.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-meta-top {
+    top: 6rem;
+    right: 1.5rem;
+    font-size: 0.65rem;
+  }
+
+  .hero-corner-left {
+    bottom: 2rem;
+    left: 1.5rem;
+    position: absolute;
+    z-index: 3;
+  }
+
+  .hero-corner-right {
+    bottom: 2rem;
+    right: 1.5rem;
+    position: absolute;
+    z-index: 3;
+    display: block;
+  }
+
+  .hero-title-group {
+    align-self: auto;
+  }
+
+  .hero-center-image {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  .hero-center-image img {
+    max-width: 100%;
   }
 
   .section-title {
@@ -1315,8 +1387,74 @@ section {
    RESPONSIVE DESIGN - 480px & Below
    ============================================ */
 @media (max-width: 480px) {
+  .header {
+    padding: 0.75rem 1rem;
+  }
+
+  .header .container {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .header .logo {
+    font-size: 0.9rem;
+    justify-self: center;
+  }
+
+  .header .location {
+    font-size: 0.5rem;
+    line-height: 11px;
+    justify-self: start;
+  }
+
+  .header .cta-header {
+    justify-self: end;
+  }
+
+  .header .cta-header .btn-primary {
+    padding: 0.35rem 0.6rem;
+    gap: 0.2rem;
+    font-size: 0.6rem;
+  }
+
+  .header .cta-header span {
+    display: inline;
+    white-space: nowrap;
+  }
+
+  .hero {
+    min-height: 100vh;
+    height: 100vh;
+  }
+
   .hero-title {
-    font-size: 2.5rem;
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+
+  .badge {
+    font-size: 0.6rem;
+  }
+
+  .hero-meta-top {
+    top: 5rem;
+    right: 1rem;
+    font-size: 0.55rem;
+  }
+
+  .hero-corner-left {
+    left: 1rem;
+    bottom: 1.5rem;
+  }
+
+  .hero-corner-right {
+    right: 1rem;
+    bottom: 1.5rem;
+  }
+
+  .meta-text {
+    font-size: 0.65rem;
   }
 
   .section-title {
