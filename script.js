@@ -68,6 +68,35 @@ document.addEventListener('DOMContentLoaded', function() {
     section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
     observer.observe(section);
   });
+
+  // Scroll to top button functionality
+  const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+  const heroSection = document.getElementById('hero');
+
+  if (scrollToTopBtn && heroSection) {
+    // Show/hide button based on hero section visibility
+    const heroObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Hero is visible, hide the button
+          scrollToTopBtn.classList.remove('show');
+        } else {
+          // Hero is not visible, show the button
+          scrollToTopBtn.classList.add('show');
+        }
+      });
+    }, { threshold: 0 });
+
+    heroObserver.observe(heroSection);
+
+    // Scroll to top on button click
+    scrollToTopBtn.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
 });
 
 /* ============================================

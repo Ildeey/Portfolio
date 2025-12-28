@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Доступен к работе - KLIMOV ILYA</title>
+  <meta name="description" content="Contact form for work inquiries">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-work.css">
+</head>
+<body class="work-page">
+  <!-- ============================================
+       HEADER & NAVIGATION
+       ============================================ -->
+  <header class="header">
+    <div class="progressive-blur-container">
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="blur-filter"></div>
+      <div class="gradient"></div>
+    </div>
+    <div class="container">
+        <div class="location">
+          <p>Russian Federation</p>
+          <p>Г. ЕКАТЕРИНБУРГ</p>
+        </div>
+        <a href="#hero" class="logo">I. A. KLIMOV</a>
+        <div class="cta-header">
+          <a href="index.html" class="btn-primary">
+            <span>Вернуться</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M15 8H1M1 8L8 15M1 8L8 1" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </a>
+        </div>
+    </div>
+  </header>
+
+  <!-- ============================================
+       WORK FORM SECTION
+       ============================================ -->
+  <section class="work-form-section">
+    <div class="container">
+      <div class="form-wrapper">
+        <!-- Left Column: Title + Description -->
+        <div class="form-column form-column-left">
+          <div class="work-form-header">
+            <h1 class="work-form-title">Давайте обсудим вашу идею</h1>
+            <p class="work-form-subtitle">Заполните форму ниже, и я свяжусь с вами в ближайшее время</p>
+          </div>
+          
+          <form class="work-form" id="workForm">
+            <div class="form-group">
+              <label for="notes">Примечание</label>
+              <textarea id="notes" name="notes" placeholder="Опишите вашу идею или проект..."></textarea>
+            </div>
+
+            <button type="submit" class="form-submit-btn">
+              <span>Отправить</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- Right Column: Contact Fields -->
+        <div class="form-column form-column-right">
+          <div class="contact-fields">
+            <div class="form-group">
+              <label for="firstName">Имя</label>
+              <input type="text" id="firstName" name="firstName" placeholder="Ваше имя" required>
+            </div>
+
+            <div class="form-group">
+              <label for="lastName">Фамилия</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Ваша фамилия" required>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="your@email.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Телефон</label>
+              <input type="tel" id="phone" name="phone" placeholder="+7 (999) 123-45-67" required>
+            </div>
+
+            <div class="form-group">
+              <label for="meetingDate">Дата встречи</label>
+              <input type="date" id="meetingDate" name="meetingDate" required>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="footer work-footer">
+    <div class="container">
+      <div class="footer-content">
+        <p class="footer-text">Klimov Ilya © Copyright 2025</p>
+        <p class="footer-text">Все права защищены</p>
+        <div class="footer-links">
+          <a href="https://github.com/Ildeey" class="footer-link" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.behance.net/lizzyboy" class="footer-link" target="_blank" rel="noopener">Behance</a>
+          <a href="https://t.me/ildeey" class="footer-link" target="_blank" rel="noopener">Telegram</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Set minimum date to today
+    document.addEventListener('DOMContentLoaded', function() {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      
+      const minDate = `${yyyy}-${mm}-${dd}`;
+      document.getElementById('meetingDate').setAttribute('min', minDate);
+    });
+
+    // Form submission
+    document.getElementById('workForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        notes: document.getElementById('notes').value,
+        meetingDate: document.getElementById('meetingDate').value
+      };
+      
+      console.log('Form submitted:', formData);
+      alert('Спасибо! Ваша заявка принята. Я свяжусь с вами в ближайшее время.');
+      this.reset();
+    });
+  </script>
+</body>
+</html>
