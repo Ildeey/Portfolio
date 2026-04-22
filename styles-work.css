@@ -161,6 +161,33 @@ body.work-page {
   margin-top: auto;
 }
 
+/* ─── Form feedback message ────────────────────────────────────────────────── */
+.form-message {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-family: 'JetBrains Mono', monospace;
+  display: none;
+}
+
+.form-message--success {
+  background: rgba(0, 255, 26, 0.08);
+  border: 1px solid rgba(0, 255, 26, 0.3);
+  color: #00ff1a;
+}
+
+.form-message--error {
+  background: rgba(255, 80, 80, 0.08);
+  border: 1px solid rgba(255, 80, 80, 0.3);
+  color: #ff5050;
+}
+
+.form-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* ============================================
    RESPONSIVE - WORK FORM
    ============================================ */

@@ -120,34 +120,70 @@
 
   <script src="script.js"></script>
   <script>
-    // Set minimum date to today
-    document.addEventListener('DOMContentLoaded', function() {
+    const API_BASE = window.location.origin;
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Min date = today
       const today = new Date();
       const yyyy = today.getFullYear();
       const mm = String(today.getMonth() + 1).padStart(2, '0');
       const dd = String(today.getDate()).padStart(2, '0');
-      
-      const minDate = `${yyyy}-${mm}-${dd}`;
-      document.getElementById('meetingDate').setAttribute('min', minDate);
+      document.getElementById('meetingDate').setAttribute('min', `${yyyy}-${mm}-${dd}`);
     });
 
-    // Form submission
-    document.getElementById('workForm').addEventListener('submit', function(e) {
+    document.getElementById('workForm').addEventListener('submit', async function (e) {
       e.preventDefault();
-      
-      const formData = {
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        notes: document.getElementById('notes').value,
-        meetingDate: document.getElementById('meetingDate').value
+
+      const btn = this.querySelector('.form-submit-btn');
+      const originalHTML = btn.innerHTML;
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>Отправка...</span>';
+
+      const body = {
+        firstName:   document.getElementById('firstName').value.trim(),
+        lastName:    document.getElementById('lastName').value.trim(),
+        email:       document.getElementById('email').value.trim(),
+        phone:       document.getElementById('phone').value.trim(),
+        notes:       document.getElementById('notes').value.trim(),
+        meetingDate: document.getElementById('meetingDate').value,
       };
-      
-      console.log('Form submitted:', formData);
-      alert('Спасибо! Ваша заявка принята. Я свяжусь с вами в ближайшее время.');
-      this.reset();
+
+      try {
+        const res = await fetch(`${API_BASE}/api/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          showMessage('success', 'Заявка отправлена! Свяжусь с вами в ближайшее время.');
+          this.reset();
+        } else {
+          showMessage('error', data.error || 'Что-то пошло не так. Попробуйте ещё раз.');
+        }
+      } catch {
+        showMessage('error', 'Нет соединения. Проверьте интернет и попробуйте снова.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+      }
     });
+
+    function showMessage(type, text) {
+      let el = document.getElementById('formMessage');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'formMessage';
+        document.querySelector('.work-form').appendChild(el);
+      }
+      el.className = `form-message form-message--${type}`;
+      el.textContent = text;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 6000);
+    }
   </script>
 </body>
 </html>

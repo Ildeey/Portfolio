@@ -47,27 +47,46 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Section fade-in animation
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-  };
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }
+  if (!prefersReducedMotion) {
+    const EASE_OUT = 'cubic-bezier(0.23, 1, 0.32, 1)';
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -80px 0px' });
+
+    document.querySelectorAll('section').forEach(section => {
+      section.style.opacity = '0';
+      section.style.transform = 'translateY(12px)';
+      section.style.transition = `opacity 0.38s ${EASE_OUT}, transform 0.38s ${EASE_OUT}`;
+      observer.observe(section);
     });
-  }, observerOptions);
 
-  const sections = document.querySelectorAll('section');
-  sections.forEach(section => {
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(20px)';
-    section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-    observer.observe(section);
-  });
+    // Stagger observer for experience items and tech list
+    const staggerObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          staggerObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.experience-item, .tech-list p').forEach(el => {
+      staggerObserver.observe(el);
+    });
+  } else {
+    document.querySelectorAll('.experience-item, .tech-list p').forEach(el => {
+      el.classList.add('is-visible');
+    });
+  }
 
   // Scroll to top button functionality
   const scrollToTopBtn = document.getElementById('scrollToTopBtn');
@@ -100,291 +119,204 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /* ============================================
-   GALLERY DATA & MODAL SYSTEM
+   PROJECTS DATA
    ============================================ */
-let currentProjectId = null;
-
-const galleryData = {
-  1: { title: 'Актёр суперсемейки', image: 'images/kartinka.jpg', description: 'Пару раз пролетал над Нью-Йорком' },
-  2: { title: 'Тюльбан', image: 'images/2.jpg', description: 'ТЮЛЬБАН' },
-  3: { title: '4D-проекция кота', image: 'images/kit.jpg', description: 'Создание 4-мерной мэппинг-проекции кота на здание Свердловской Екатеринбуржской фабрики заводов ЕАСИ' },
-  4: { title: 'КТЯ', image: 'images/ktya.jpg', description: 'Требуется дополнительная информация...' },
-  5: { title: 'Кот на планете', image: 'images/1.jpg', description: 'Первый проект для школьной выставки' }
+const projectsData = {
+  featured: [
+    {
+      id: 'vremena',
+      title: 'ВРЕМЕНА ГОДА 2025',
+      year: '2025',
+      category: 'Айдентика',
+      image: 'images/vremena2.png',
+      description: 'Дизайн айдентики и сайт для цифровой инсталляции "Четыре" в рамках премьеры спектакля в театре.',
+      link: 'http://vremenagoda.4.tilda.ws/'
+    },
+    {
+      id: 'ktya',
+      title: 'КТЯ',
+      year: '2024',
+      category: 'Графический дизайн',
+      image: 'images/ktya.jpg',
+      description: 'Требуется дополнительная информация...',
+      link: null
+    }
+  ],
+  categories: {
+    design: {
+      label: 'Графический дизайн',
+      teaserImage: 'images/kartinka.jpg',
+      projects: [
+        { id: 1, title: 'Актёр суперсемейки', year: '2023', image: 'images/kartinka.jpg', description: 'Пару раз пролетал над Нью-Йорком', link: null },
+        { id: 4, title: 'КТЯ', year: '2024', image: 'images/ktya.jpg', description: 'Требуется дополнительная информация...', link: null }
+      ]
+    },
+    photo: {
+      label: 'Фотография',
+      teaserImage: 'images/2.jpg',
+      projects: [
+        { id: 2, title: 'Тюльбан', year: '2022', image: 'images/2.jpg', description: 'ТЮЛЬБАН', link: null },
+        { id: 5, title: 'Кот на планете', year: '2021', image: 'images/1.jpg', description: 'Первый проект для школьной выставки', link: null }
+      ]
+    },
+    video: {
+      label: 'Видеоконтент',
+      teaserImage: 'images/kit.jpg',
+      projects: [
+        { id: 3, title: '4D-проекция кота', year: '2023', image: 'images/kit.jpg', description: 'Создание 4-мерной мэппинг-проекции кота на здание ЕАСИ', link: null }
+      ]
+    }
+  }
 };
 
 /* ============================================
-   MODAL FUNCTIONS
+   CATEGORY ACCORDION
    ============================================ */
-function openModal(projectId) {
-  const modal = document.getElementById('imageModal');
-  const project = galleryData[projectId];
-  
-  if (!project) return;
+document.addEventListener('DOMContentLoaded', function () {
+  const accordion = document.querySelector('.cat-accordion');
+  if (!accordion) return;
 
-  currentProjectId = projectId;
-  
-  document.getElementById('modalImage').src = project.image;
-  document.getElementById('modalTitle').textContent = project.title;
-  document.getElementById('modalDescription').textContent = project.description;
+  const cols = accordion.querySelectorAll('.cat-col');
 
-  updateNavigationButtons();
-  modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
+  cols.forEach(col => {
+    col.addEventListener('click', function (e) {
+      const expanded = col.querySelector('.cat-expanded');
+      const isInsideExpanded = expanded && expanded.contains(e.target);
+      const isCloseBtn = e.target.closest('.cat-close');
 
-function closeModal() {
-  const modal = document.getElementById('imageModal');
-  modal.classList.remove('active');
-  document.body.style.overflow = 'auto';
-  currentProjectId = null;
-}
+      if (isInsideExpanded && !isCloseBtn) return;
 
-function showPrevious() {
-  if (!currentProjectId) return;
-  const projectIds = Object.keys(galleryData).map(Number).sort((a, b) => a - b);
-  const currentIndex = projectIds.indexOf(currentProjectId);
-  const previousId = projectIds[currentIndex - 1];
-  
-  if (previousId) {
-    openModal(previousId);
-  }
-}
-
-function showNext() {
-  if (!currentProjectId) return;
-  const projectIds = Object.keys(galleryData).map(Number).sort((a, b) => a - b);
-  const currentIndex = projectIds.indexOf(currentProjectId);
-  const nextId = projectIds[currentIndex + 1];
-  
-  if (nextId) {
-    openModal(nextId);
-  }
-}
-
-function updateNavigationButtons() {
-  const projectIds = Object.keys(galleryData).map(Number).sort((a, b) => a - b);
-  const currentIndex = projectIds.indexOf(currentProjectId);
-  
-  const prevBtn = document.querySelector('.modal-prev');
-  const nextBtn = document.querySelector('.modal-next');
-  
-  prevBtn.disabled = currentIndex === 0;
-  nextBtn.disabled = currentIndex === projectIds.length - 1;
-}
-
-/* ============================================
-   MODAL EVENT HANDLERS
-   ============================================ */
-document.addEventListener('DOMContentLoaded', function() {
-  const galleryCards = document.querySelectorAll('.gallery-card:not(.empty)');
-  const emptyCards = document.querySelectorAll('.gallery-card.empty');
-  const modal = document.getElementById('imageModal');
-  const closeBtn = document.querySelector('.modal-close');
-  const prevBtn = document.querySelector('.modal-prev');
-  const nextBtn = document.querySelector('.modal-next');
-
-  // Gallery card click handlers for filled cards
-  galleryCards.forEach(card => {
-    card.addEventListener('click', function() {
-      const projectId = parseInt(this.getAttribute('data-project-id'));
-      openModal(projectId);
-    });
-  });
-
-  // Empty card click handlers - scroll to form
-  emptyCards.forEach(card => {
-    card.addEventListener('click', function() {
-      const formElement = document.getElementById('addProjectForm');
-      if (formElement) {
-        formElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
+      if (col.classList.contains('is-active')) {
+        collapseAll();
+      } else {
+        expandCol(col);
       }
     });
   });
 
-  // Modal control handlers
-  closeBtn.addEventListener('click', closeModal);
-  prevBtn.addEventListener('click', showPrevious);
-  nextBtn.addEventListener('click', showNext);
+  function expandCol(targetCol) {
+    cols.forEach(col => col.classList.remove('is-active', 'is-shrunk'));
+    targetCol.classList.add('is-active');
+    cols.forEach(col => { if (col !== targetCol) col.classList.add('is-shrunk'); });
+    accordion.classList.add('has-active');
+  }
 
-  // Close modal on backdrop click
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) {
-      closeModal();
-    }
+  function collapseAll() {
+    cols.forEach(col => col.classList.remove('is-active', 'is-shrunk'));
+    accordion.classList.remove('has-active');
+  }
+});
+
+/* ============================================
+   MODAL SYSTEM
+   ============================================ */
+document.addEventListener('DOMContentLoaded', function () {
+  const modal = document.getElementById('imageModal');
+  if (!modal) return;
+
+  const closeBtn = modal.querySelector('.modal-close');
+  const prevBtn  = modal.querySelector('.modal-prev');
+  const nextBtn  = modal.querySelector('.modal-next');
+  let currentModal = { category: null, index: null };
+
+  document.addEventListener('click', function (e) {
+    const item = e.target.closest('.cat-project-item');
+    if (!item) return;
+
+    const category = item.dataset.category;
+    const id = parseInt(item.dataset.projectId);
+    const projects = projectsData.categories[category]?.projects || [];
+    const index = projects.findIndex(p => p.id === id);
+
+    if (index === -1) return;
+    openModal(category, index);
   });
 
-  // Keyboard navigation
-  document.addEventListener('keydown', function(e) {
+  function openModal(category, index) {
+    const projects = projectsData.categories[category].projects;
+    const project  = projects[index];
+    currentModal = { category, index };
+
+    modal.querySelector('#modalImage').src = project.image;
+    modal.querySelector('#modalTitle').textContent = project.title;
+    modal.querySelector('#modalDescription').textContent = project.description;
+
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === projects.length - 1;
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    currentModal = { category: null, index: null };
+  }
+
+  prevBtn.addEventListener('click', function () {
+    if (currentModal.index > 0) openModal(currentModal.category, currentModal.index - 1);
+  });
+
+  nextBtn.addEventListener('click', function () {
+    const projects = projectsData.categories[currentModal.category]?.projects || [];
+    if (currentModal.index < projects.length - 1) openModal(currentModal.category, currentModal.index + 1);
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) closeModal();
+  });
+
+  document.addEventListener('keydown', function (e) {
     if (!modal.classList.contains('active')) return;
-    if (e.key === 'Escape') closeModal();
-    if (e.key === 'ArrowLeft') showPrevious();
-    if (e.key === 'ArrowRight') showNext();
+    if (e.key === 'Escape')     closeModal();
+    if (e.key === 'ArrowLeft')  prevBtn.click();
+    if (e.key === 'ArrowRight') nextBtn.click();
   });
 });
 
 /* ============================================
-   FORM HANDLING
+   VISITOR COUNTER & TIME TRACKING
    ============================================ */
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('projectForm');
-  const formMessage = document.getElementById('formMessage');
+document.addEventListener('DOMContentLoaded', function () {
+  const visitKey    = 'portfolio_visits';
+  const totalTimeKey = 'portfolio_total_time';
 
-  if (!form) return; // Form doesn't exist on this page
+  let visits = parseInt(localStorage.getItem(visitKey)) || 0;
+  visits++;
+  localStorage.setItem(visitKey, visits);
 
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const projectName = document.getElementById('projectName').value.trim();
-    const projectImage = document.getElementById('projectImage').value.trim();
-    const projectDescription = document.getElementById('projectDescription').value.trim();
+  let totalTime = parseInt(localStorage.getItem(totalTimeKey)) || 0;
 
-    if (!projectName || !projectImage) {
-      showFormMessage('Please fill in all required fields', 'error');
-      return;
-    }
+  const visitStatsElement = document.getElementById('visit-stats');
+  if (visitStatsElement) visitStatsElement.textContent = `Визитов: ${visits}`;
 
-    // Find first empty gallery card
-    const emptyCard = document.querySelector('.gallery-card.empty');
-    if (!emptyCard) {
-      showFormMessage('Gallery is full. Maximum 15 projects allowed.', 'error');
-      return;
-    }
+  function formatTime(seconds) {
+    const hours   = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs    = seconds % 60;
+    if (hours > 0)   return `${hours}/${minutes}/${secs}`;
+    if (minutes > 0) return `${minutes}/${secs}`;
+    return `${secs}`;
+  }
 
-    // Update empty card with new project
-    const projectId = emptyCard.getAttribute('data-project-id');
-    emptyCard.classList.remove('empty');
-    
-    const imageWrapper = emptyCard.querySelector('.gallery-image-wrapper');
-    imageWrapper.innerHTML = `<img src="${projectImage}" alt="${projectName}" class="gallery-image"><div class="gallery-overlay"></div>`;
-    
-    const titleElement = emptyCard.querySelector('.gallery-title');
-    titleElement.textContent = projectName;
+  const timeSpentElement = document.getElementById('time-spent');
+  if (timeSpentElement) timeSpentElement.textContent = formatTime(totalTime);
 
-    // Add to gallery data
-    galleryData[parseInt(projectId)] = {
-      title: projectName,
-      image: projectImage,
-      description: projectDescription
-    };
+  const sessionStart = Date.now();
 
-    // Add click handler to new card
-    emptyCard.addEventListener('click', function() {
-      openModal(parseInt(projectId));
-    });
+  const timeInterval = setInterval(() => {
+    totalTime++;
+    localStorage.setItem(totalTimeKey, totalTime);
+    if (timeSpentElement) timeSpentElement.textContent = formatTime(totalTime);
+  }, 1000);
 
-    // Re-bind empty cards since we removed one from the empty class
-    const remainingEmptyCards = document.querySelectorAll('.gallery-card.empty');
-    remainingEmptyCards.forEach(card => {
-      card.onclick = function() {
-        const formElement = document.getElementById('addProjectForm');
-        if (formElement) {
-          formElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      };
-    });
-
-    // Reset form
-    form.reset();
-    showFormMessage(`Project "${projectName}" added successfully!`, 'success');
+  window.addEventListener('beforeunload', () => {
+    clearInterval(timeInterval);
+    const finalTime = Math.floor((Date.now() - sessionStart) / 1000);
+    const currentTotal = parseInt(localStorage.getItem(totalTimeKey)) || 0;
+    localStorage.setItem(totalTimeKey, currentTotal + finalTime);
   });
-
-  function showFormMessage(message, type) {
-    formMessage.textContent = message;
-    formMessage.className = `form-message ${type}`;
-    
-    setTimeout(() => {
-      formMessage.textContent = '';
-      formMessage.className = 'form-message';
-    }, 4000);
-  }
-
-  /* ============================================
-     VISITOR COUNTER & TIME TRACKING
-     ============================================ */
-  
-  // Initialize visitor counter
-  function initVisitorCounter() {
-    const visitKey = 'portfolio_visits';
-    const startTimeKey = 'portfolio_session_start';
-    const totalTimeKey = 'portfolio_total_time';
-    
-    // Get or initialize visit count
-    let visits = parseInt(localStorage.getItem(visitKey)) || 0;
-    visits++;
-    localStorage.setItem(visitKey, visits);
-    
-    // Initialize session start time if not exists
-    if (!localStorage.getItem(startTimeKey)) {
-      localStorage.setItem(startTimeKey, Date.now());
-    }
-    
-    // Get or initialize total time spent
-    let totalTime = parseInt(localStorage.getItem(totalTimeKey)) || 0;
-    
-    // Update the visit stats display
-    const visitStatsElement = document.getElementById('visit-stats');
-    if (visitStatsElement) {
-      visitStatsElement.textContent = `Визитов: ${visits}`;
-    }
-    
-    // Track time spent on site
-    let sessionStartTime = Date.now();
-    let timeElapsed = 0;
-    
-    const timeInterval = setInterval(() => {
-      timeElapsed++;
-      totalTime++;
-      
-      // Update localStorage
-      localStorage.setItem(totalTimeKey, totalTime);
-      
-      // Update the time display
-      const timeSpentElement = document.getElementById('time-spent');
-      if (timeSpentElement) {
-        timeSpentElement.textContent = formatTime(totalTime);
-      }
-    }, 1000); // Update every second
-    
-    // Format time in human readable format
-    function formatTime(seconds) {
-      const hours = Math.floor(seconds / 3600);
-      const minutes = Math.floor((seconds % 3600) / 60);
-      const secs = seconds % 60;
-      
-      if (hours > 0) {
-        return `${hours}/${minutes}/${secs}`;
-      } else if (minutes > 0) {
-        return `${minutes}/${secs}`;
-      } else {
-        return `${secs}`;
-      }
-    }
-    
-    // Update time display on page load
-    const timeSpentElement = document.getElementById('time-spent');
-    if (timeSpentElement) {
-      timeSpentElement.textContent = formatTime(totalTime);
-    }
-    
-    // Update time before page unload
-    window.addEventListener('beforeunload', () => {
-      clearInterval(timeInterval);
-      const finalTime = Math.floor((Date.now() - sessionStartTime) / 1000);
-      let currentTotal = parseInt(localStorage.getItem(totalTimeKey)) || 0;
-      localStorage.setItem(totalTimeKey, currentTotal + finalTime);
-    });
-  }
-  
-  // Initialize counter when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initVisitorCounter);
-  } else {
-    initVisitorCounter();
-  }
 });
