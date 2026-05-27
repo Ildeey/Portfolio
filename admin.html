@@ -1,532 +1,360 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin — KLIMOV ILYA</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Личный кабинет — KLIMOV ILYA</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #080808;
-      --surface: #0f0f0f;
-      --border: #1e1e1e;
-      --border-hover: #2e2e2e;
-      --text: #f0f0f0;
-      --muted: #a3a3a3;
-      --faint: #595959;
-      --green: #00ff1a;
-      --red: #ff5050;
-      --yellow: #f59e0b;
-      --blue: #60a5fa;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Montserrat', system-ui, sans-serif;
-      min-height: 100vh;
-    }
-
-    /* ── Login screen ── */
-    #loginScreen {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 1.5rem;
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 380px;
-      border: 1px solid var(--border);
-      border-radius: 1rem;
-      padding: 2rem;
-      background: var(--surface);
-    }
-
-    .login-card h1 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 1.5rem;
-    }
-
-    .login-card h1 span { color: var(--text); }
-
-    .login-card input {
-      width: 100%;
-      padding: 0.625rem 0.875rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
-      color: var(--text);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.875rem;
-      margin-bottom: 0.75rem;
-      transition: border-color 0.2s;
-    }
-
-    .login-card input:focus { outline: none; border-color: var(--text); }
-
-    .btn-primary {
-      width: 100%;
-      padding: 0.625rem 1.25rem;
-      background: #fff;
-      color: #000;
-      border: none;
-      border-radius: 9999px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .btn-primary:hover { opacity: 0.85; }
-
-    .login-error {
-      margin-top: 0.75rem;
-      font-size: 0.8rem;
-      color: var(--red);
-      font-family: 'JetBrains Mono', monospace;
-      display: none;
-    }
-
-    /* ── App shell ── */
-    #app { display: none; }
-
-    header.admin-header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(8,8,8,0.9);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0.875rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .admin-logo {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .admin-logo span { color: var(--text); }
-
-    .header-actions { display: flex; gap: 0.75rem; align-items: center; }
-
-    .btn-ghost {
-      padding: 0.4rem 0.875rem;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 9999px;
-      color: var(--muted);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .btn-ghost:hover { border-color: var(--text); color: var(--text); }
-
-    main { padding: 2rem; max-width: 1200px; margin: 0 auto; }
-
-    /* ── Stats ── */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 0.75rem;
-      padding: 1rem 1.25rem;
-    }
-
-    .stat-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--faint);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.4rem;
-    }
-
-    .stat-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    /* ── Filter bar ── */
-    .filter-bar {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
-    }
-
-    .filter-btn {
-      padding: 0.35rem 0.875rem;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 9999px;
-      color: var(--muted);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .filter-btn:hover { border-color: var(--text); color: var(--text); }
-    .filter-btn.active { background: #fff; border-color: #fff; color: #000; }
-
-    /* ── Table ── */
-    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 0.75rem; }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-
-    thead th {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      font-weight: 500;
-      color: var(--faint);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      border-bottom: 1px solid var(--border);
-      background: var(--surface);
-      white-space: nowrap;
-    }
-
-    tbody tr {
-      border-bottom: 1px solid var(--border);
-      transition: background 0.15s;
-    }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: rgba(255,255,255,0.02); }
-
-    td { padding: 0.875rem 1rem; vertical-align: top; }
-
-    td.name-col { font-weight: 600; white-space: nowrap; }
-    td.email-col { color: var(--muted); font-size: 0.8rem; }
-    td.phone-col { color: var(--muted); font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; }
-    td.notes-col { color: var(--muted); font-size: 0.8rem; max-width: 220px; }
-    td.date-col  { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--faint); white-space: nowrap; }
-
-    /* status badge */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-    .badge--new        { background: rgba(96,165,250,0.1);  border: 1px solid rgba(96,165,250,0.3);  color: var(--blue); }
-    .badge--in-progress{ background: rgba(245,158,11,0.1);  border: 1px solid rgba(245,158,11,0.3);  color: var(--yellow); }
-    .badge--done       { background: rgba(0,255,26,0.08);   border: 1px solid rgba(0,255,26,0.25);   color: var(--green); }
-    .badge--rejected   { background: rgba(255,80,80,0.08);  border: 1px solid rgba(255,80,80,0.25);  color: var(--red); }
-
-    /* row actions */
-    .row-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-
-    .action-btn {
-      padding: 0.2rem 0.55rem;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 0.375rem;
-      color: var(--muted);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .action-btn:hover { border-color: var(--text); color: var(--text); }
-    .action-btn.danger:hover { border-color: var(--red); color: var(--red); }
-
-    /* empty / loading */
-    .empty-state {
-      text-align: center;
-      padding: 4rem 1rem;
-      color: var(--faint);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
-    }
-
-    /* toast */
-    #toast {
-      position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
-      padding: 0.75rem 1.25rem;
-      border-radius: 0.5rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.25s, transform 0.25s;
-      pointer-events: none;
-      z-index: 100;
-    }
-    #toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    #toast.success { background: rgba(0,255,26,0.1); border: 1px solid rgba(0,255,26,0.3); color: var(--green); }
-    #toast.error   { background: rgba(255,80,80,0.1); border: 1px solid rgba(255,80,80,0.3); color: var(--red); }
-
-    @media (max-width: 640px) {
-      main { padding: 1rem; }
-      .admin-header { padding: 0.75rem 1rem; }
-    }
+    body { margin: 0; min-height: 100vh; background: #080808; color: #f5f5f5; font-family: 'Montserrat', system-ui, sans-serif; }
+    .wrap { max-width: 980px; margin: 36px auto; padding: 0 20px; }
+    .admin-card { background: #0f0f0f; border: 1px solid #1c1c1c; border-radius: 1.25rem; padding: 1.5rem; }
+    .admin-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+    .admin-title { font-size: 0.95rem; letter-spacing: 0.14em; color: #a3a3a3; text-transform: uppercase; }
+    .admin-badge { margin-top: 0.5rem; color: #7f7f7f; font-size: 0.9rem; }
+    .tab-buttons { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .tab-button { padding: 0.85rem 1rem; border-radius: 9999px; border: 1px solid #1c1c1c; background: transparent; color: #d4d4d4; cursor: pointer; transition: all 0.18s var(--ease-out); }
+    .tab-button.active { background: #38d26b; border-color: #38d26b; color: #060606; }
+    .card-panel { background: #111; border: 1px solid #1f1f1f; border-radius: 1rem; padding: 1.5rem; }
+    .field-grid { display: grid; gap: 1rem; margin-bottom: 1rem; }
+    .field-grid input, .field-grid textarea { width: 100%; padding: 0.95rem 1rem; border-radius: 0.9rem; border: 1px solid #262626; background: #090909; color: #f0f0f0; }
+    .field-grid input::placeholder, .field-grid textarea::placeholder { color: #6f6f6f; }
+    .section-title { margin: 0 0 1rem; font-size: 1.35rem; }
+    .admin-note { color: #9a9a9a; font-size: 0.95rem; margin-top: 0.5rem; }
+    .dashboard-grid { display: grid; gap: 1.5rem; }
+    .project-list { display: grid; gap: 1rem; }
+    .project-card { display: grid; grid-template-columns: 1fr 2fr auto; gap: 1rem; align-items: center; padding: 1rem; border: 1px solid #1f1f1f; border-radius: 1rem; background: #0b0b0b; }
+    .project-card h4 { margin: 0 0 0.35rem; font-size: 1rem; }
+    .project-card p { margin: 0; color: #a3a3a3; font-size: 0.95rem; line-height: 1.5; }
+    .project-card-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #7f7f7f; }
+    .project-card-actions { display: flex; gap: 0.5rem; }
+    .project-card-actions button { font-size: 0.8rem; }
+    .panel-title { font-size: 1.1rem; margin-bottom: 1rem; }
+    .hidden { display: none; }
+    @media (max-width: 768px) { .admin-header { flex-direction: column; align-items: stretch; } .project-card { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="admin-card">
+      <header class="admin-header">
+        <div>
+          <div class="admin-title">I. A. KLIMOV — Личный кабинет</div>
+          <div id="userBadge" class="admin-badge">Не выполнен вход</div>
+        </div>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-ghost" id="btnHome">Главная</button>
+          <button class="btn btn-ghost hidden" id="btnLogout">Выйти</button>
+        </div>
+      </header>
 
-<!-- ── Login ──────────────────────────────────────────────────────────────── -->
-<div id="loginScreen">
-  <div class="login-card">
-    <h1>I. A. KLIMOV — <span>Admin</span></h1>
-    <input type="password" id="tokenInput" placeholder="Введите токен доступа" autocomplete="current-password">
-    <button class="btn-primary" onclick="login()">Войти</button>
-    <p class="login-error" id="loginError">Неверный токен</p>
+      <div class="tab-buttons" id="tabButtons">
+        <button class="tab-button active" id="tabLogin">Войти</button>
+        <button class="tab-button" id="tabRegister">Регистрация</button>
+      </div>
+
+      <div id="authWrapper">
+        <section id="loginPanel" class="card-panel">
+          <h2 class="section-title">Вход</h2>
+          <div class="field-grid">
+            <input id="loginUser" type="text" placeholder="Имя пользователя или email" autocomplete="username">
+            <input id="loginPass" type="password" placeholder="Пароль" autocomplete="current-password">
+          </div>
+          <button class="btn btn-primary" id="btnLogin">Войти</button>
+          <p class="admin-note">Владелец сайта может войти как <strong>admin</strong> / <strong>admin123</strong>.</p>
+        </section>
+
+        <section id="registerPanel" class="card-panel hidden">
+          <h2 class="section-title">Регистрация</h2>
+          <div class="field-grid">
+            <input id="regUser" type="text" placeholder="Имя пользователя" autocomplete="username">
+            <input id="regEmail" type="email" placeholder="Email" autocomplete="email">
+            <input id="regPhone" type="tel" placeholder="Телефон">
+            <input id="regPass" type="password" placeholder="Пароль" autocomplete="new-password">
+          </div>
+          <button class="btn btn-primary" id="btnRegister">Зарегистрироваться</button>
+        </section>
+      </div>
+
+      <section id="dashboardPanel" class="card-panel hidden">
+        <div id="dashboardText" class="admin-note"></div>
+
+        <div id="adminSection" class="dashboard-grid hidden">
+          <div>
+            <h2 class="section-title">Добавить проект</h2>
+            <form id="projectForm">
+              <div class="field-grid">
+                <input id="projectCategory" type="text" placeholder="Категория" required>
+                <input id="projectTitle" type="text" placeholder="Название проекта" required>
+                <textarea id="projectDescription" rows="4" placeholder="Описание проекта" required></textarea>
+                <label class="file-field">
+                  <span>Выбрать фото проекта</span>
+                  <input id="projectImage" type="file" accept="image/jpeg,image/png,image/webp">
+                </label>
+              </div>
+              <button class="btn btn-primary" id="btnSaveProject" type="submit">Добавить проект</button>
+            </form>
+          </div>
+
+          <div>
+            <h3 class="panel-title">Проекты</h3>
+            <div id="projectList" class="project-list"></div>
+          </div>
+        </div>
+
+        <div id="clientSection" class="dashboard-grid hidden">
+          <h2 class="section-title">Пользовательский кабинет</h2>
+          <p class="admin-note">Вы вошли как пользователь. Запросы отправляются через главную страницу.</p>
+          <button class="btn btn-primary" id="btnToHome">Перейти на главную</button>
+        </div>
+      </section>
+    </div>
   </div>
-</div>
 
-<!-- ── App ────────────────────────────────────────────────────────────────── -->
-<div id="app">
-  <header class="admin-header">
-    <div class="admin-logo">I. A. KLIMOV — <span>Admin</span></div>
-    <div class="header-actions">
-      <button class="btn-ghost" onclick="loadSubmissions()">Обновить</button>
-      <button class="btn-ghost" onclick="logout()">Выйти</button>
-    </div>
-  </header>
+  <script>
+    const API_BASE = './api';
+    const tabLogin = document.getElementById('tabLogin');
+    const tabRegister = document.getElementById('tabRegister');
+    const loginPanel = document.getElementById('loginPanel');
+    const registerPanel = document.getElementById('registerPanel');
+    const dashboardPanel = document.getElementById('dashboardPanel');
+    const authWrapper = document.getElementById('authWrapper');
+    const adminSection = document.getElementById('adminSection');
+    const clientSection = document.getElementById('clientSection');
+    const userBadge = document.getElementById('userBadge');
+    const btnLogout = document.getElementById('btnLogout');
+    const btnHome = document.getElementById('btnHome');
+    const btnToHome = document.getElementById('btnToHome');
+    const btnLogin = document.getElementById('btnLogin');
+    const btnRegister = document.getElementById('btnRegister');
+    const projectForm = document.getElementById('projectForm');
+    const projectList = document.getElementById('projectList');
 
-  <main>
-    <div class="stats-row" id="statsRow">
-      <div class="stat-card"><div class="stat-label">Всего</div><div class="stat-value" id="statTotal">—</div></div>
-      <div class="stat-card"><div class="stat-label">Новых</div><div class="stat-value" style="color:var(--blue)" id="statNew">—</div></div>
-      <div class="stat-card"><div class="stat-label">В работе</div><div class="stat-value" style="color:var(--yellow)" id="statProgress">—</div></div>
-      <div class="stat-card"><div class="stat-label">Выполнено</div><div class="stat-value" style="color:var(--green)" id="statDone">—</div></div>
-    </div>
+    function apiFetch(url, options = {}) {
+      return fetch(url, { credentials: 'include', headers: { Accept: 'application/json' }, ...options })
+        .then(async response => {
+          const data = await response.json().catch(() => null);
+          if (!response.ok) {
+            const error = data?.error || response.statusText || 'Ошибка запроса';
+            throw new Error(error);
+          }
+          return data;
+        });
+    }
 
-    <div class="filter-bar" id="filterBar">
-      <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">Все</button>
-      <button class="filter-btn" data-filter="new" onclick="setFilter('new', this)">Новые</button>
-      <button class="filter-btn" data-filter="in-progress" onclick="setFilter('in-progress', this)">В работе</button>
-      <button class="filter-btn" data-filter="done" onclick="setFilter('done', this)">Выполнено</button>
-      <button class="filter-btn" data-filter="rejected" onclick="setFilter('rejected', this)">Отклонено</button>
-    </div>
+    function showTab(activeTab) {
+      if (activeTab === 'login') {
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+        loginPanel.classList.remove('hidden');
+        registerPanel.classList.add('hidden');
+      } else {
+        tabRegister.classList.add('active');
+        tabLogin.classList.remove('active');
+        registerPanel.classList.remove('hidden');
+        loginPanel.classList.add('hidden');
+      }
+    }
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Имя</th>
-            <th>Email</th>
-            <th>Телефон</th>
-            <th>Встреча</th>
-            <th>Примечание</th>
-            <th>Статус</th>
-            <th>Дата заявки</th>
-            <th>Действия</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody">
-          <tr><td colspan="9" class="empty-state">Загрузка...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
-</div>
+    async function currentUser() {
+      try {
+        const data = await apiFetch(`${API_BASE}/auth.php?action=current`);
+        return data.user || null;
+      } catch {
+        return null;
+      }
+    }
 
-<div id="toast"></div>
-
-<script>
-  const API = window.location.origin;
-  let token = sessionStorage.getItem('adminToken') || '';
-  let allRows = [];
-  let currentFilter = 'all';
-
-  const statusLabels = { 'new': 'Новая', 'in-progress': 'В работе', 'done': 'Выполнено', 'rejected': 'Отклонено' };
-
-  // ── Auth ──────────────────────────────────────────────────────────────────
-  if (token) initApp();
-
-  function login() {
-    token = document.getElementById('tokenInput').value.trim();
-    if (!token) return;
-    sessionStorage.setItem('adminToken', token);
-    initApp();
-  }
-
-  function logout() {
-    sessionStorage.removeItem('adminToken');
-    token = '';
-    document.getElementById('app').style.display = 'none';
-    document.getElementById('loginScreen').style.display = 'flex';
-  }
-
-  document.getElementById('tokenInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') login();
-  });
-
-  function initApp() {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    loadSubmissions();
-  }
-
-  // ── Data ──────────────────────────────────────────────────────────────────
-  async function loadSubmissions() {
-    try {
-      const res = await fetch(`${API}/api/admin/submissions`, {
-        headers: { 'x-admin-token': token }
-      });
-
-      if (res.status === 401) {
-        document.getElementById('loginError').style.display = 'block';
-        logout();
+    async function login() {
+      const login = document.getElementById('loginUser').value.trim();
+      const password = document.getElementById('loginPass').value;
+      if (!login || !password) {
+        alert('Введите логин и пароль');
         return;
       }
 
-      allRows = await res.json();
-      updateStats();
-      renderTable();
-    } catch {
-      showToast('Ошибка загрузки данных', 'error');
-    }
-  }
-
-  function updateStats() {
-    document.getElementById('statTotal').textContent    = allRows.length;
-    document.getElementById('statNew').textContent      = allRows.filter(r => r.status === 'new').length;
-    document.getElementById('statProgress').textContent = allRows.filter(r => r.status === 'in-progress').length;
-    document.getElementById('statDone').textContent     = allRows.filter(r => r.status === 'done').length;
-  }
-
-  function setFilter(filter, btn) {
-    currentFilter = filter;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderTable();
-  }
-
-  function renderTable() {
-    const rows = currentFilter === 'all' ? allRows : allRows.filter(r => r.status === currentFilter);
-    const tbody = document.getElementById('tableBody');
-
-    if (!rows.length) {
-      tbody.innerHTML = `<tr><td colspan="9" class="empty-state">Нет заявок</td></tr>`;
-      return;
+      try {
+        const data = await apiFetch(`${API_BASE}/auth.php?action=login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ login, password }),
+        });
+        renderUser(data.user);
+      } catch (error) {
+        alert(error.message);
+      }
     }
 
-    tbody.innerHTML = rows.map(r => `
-      <tr>
-        <td class="date-col">#${r.id}</td>
-        <td class="name-col">${esc(r.firstName)} ${esc(r.lastName)}</td>
-        <td class="email-col"><a href="mailto:${esc(r.email)}" style="color:inherit">${esc(r.email)}</a></td>
-        <td class="phone-col"><a href="tel:${esc(r.phone)}" style="color:inherit">${esc(r.phone)}</a></td>
-        <td class="date-col">${r.meetingDate ? formatDate(r.meetingDate) : '—'}</td>
-        <td class="notes-col" title="${esc(r.notes || '')}">${r.notes ? truncate(esc(r.notes), 60) : '<span style="color:var(--faint)">—</span>'}</td>
-        <td><span class="badge badge--${r.status}">${statusLabels[r.status]}</span></td>
-        <td class="date-col">${formatDateTime(r.createdAt)}</td>
-        <td>
-          <div class="row-actions">
-            ${r.status !== 'in-progress' ? `<button class="action-btn" onclick="setStatus(${r.id},'in-progress')">В работу</button>` : ''}
-            ${r.status !== 'done'        ? `<button class="action-btn" onclick="setStatus(${r.id},'done')">Готово</button>` : ''}
-            ${r.status !== 'rejected'    ? `<button class="action-btn" onclick="setStatus(${r.id},'rejected')">Откл.</button>` : ''}
-            <button class="action-btn danger" onclick="deleteRow(${r.id})">Удалить</button>
+    async function registerUser() {
+      const username = document.getElementById('regUser').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const password = document.getElementById('regPass').value;
+      if (!username || !email || !password) {
+        alert('Заполните все поля');
+        return;
+      }
+
+      try {
+        const data = await apiFetch(`${API_BASE}/auth.php?action=register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, phone, password }),
+        });
+        renderUser(data.user);
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    async function logout() {
+      try {
+        await apiFetch(`${API_BASE}/auth.php?action=logout`, { method: 'POST' });
+      } catch {
+        // ignore
+      }
+      renderUser(null);
+    }
+
+    function renderUser(user) {
+      if (!user) {
+        authWrapper.classList.remove('hidden');
+        dashboardPanel.classList.add('hidden');
+        btnLogout.classList.add('hidden');
+        userBadge.textContent = 'Не выполнен вход';
+        adminSection.classList.add('hidden');
+        clientSection.classList.add('hidden');
+        return;
+      }
+
+      authWrapper.classList.add('hidden');
+      dashboardPanel.classList.remove('hidden');
+      btnLogout.classList.remove('hidden');
+      userBadge.textContent = `В системе: ${user.username} (${user.role})`;
+
+      if (user.role === 'admin') {
+        adminSection.classList.remove('hidden');
+        clientSection.classList.add('hidden');
+        document.getElementById('dashboardText').textContent = 'Вы можете добавлять проекты и управлять их списком.';
+        loadProjects();
+      } else {
+        clientSection.classList.remove('hidden');
+        adminSection.classList.add('hidden');
+        document.getElementById('dashboardText').textContent = 'Вы вошли как пользователь. Запросы отправляются через главную страницу.';
+      }
+    }
+
+    function renderProjectList(projects) {
+      if (!projectList) return;
+      if (!projects || projects.length === 0) {
+        projectList.innerHTML = '<div class="admin-note">Проекты отсутствуют.</div>';
+        return;
+      }
+
+      projectList.innerHTML = projects
+        .map(project => `
+          <div class="project-card">
+            <div>
+              <h4>${escapeHtml(project.title)}</h4>
+              <p class="project-card-meta">${escapeHtml(project.category)} · ${escapeHtml(formatDate(project.created_at))}</p>
+              <p>${escapeHtml(project.description)}</p>
+            </div>
+            <div class="project-card-actions">
+              <button class="btn btn-ghost" data-delete-id="${project.id}">Удалить</button>
+            </div>
           </div>
-        </td>
-      </tr>
-    `).join('');
-  }
+        `)
+        .join('');
 
-  async function setStatus(id, status) {
-    try {
-      await fetch(`${API}/api/admin/submissions/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
-        body: JSON.stringify({ status })
+      projectList.querySelectorAll('[data-delete-id]').forEach(button => {
+        button.addEventListener('click', async () => {
+          const id = button.getAttribute('data-delete-id');
+          if (!id || !confirm('Удалить проект?')) return;
+          try {
+            await apiFetch(`${API_BASE}/projects.php?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+            loadProjects();
+          } catch (error) {
+            alert(error.message);
+          }
+        });
       });
-      allRows = allRows.map(r => r.id === id ? { ...r, status } : r);
-      updateStats();
-      renderTable();
-      showToast('Статус обновлён', 'success');
-    } catch {
-      showToast('Ошибка обновления', 'error');
     }
-  }
 
-  async function deleteRow(id) {
-    if (!confirm('Удалить эту заявку?')) return;
-    try {
-      await fetch(`${API}/api/admin/submissions/${id}`, {
-        method: 'DELETE',
-        headers: { 'x-admin-token': token }
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatDate(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+    }
+
+    async function loadProjects() {
+      try {
+        const data = await apiFetch(`${API_BASE}/projects.php`);
+        renderProjectList(data.projects || []);
+      } catch (error) {
+        projectList.innerHTML = `<div class="admin-note">${escapeHtml(error.message)}</div>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      tabLogin.addEventListener('click', () => showTab('login'));
+      tabRegister.addEventListener('click', () => showTab('register'));
+      btnLogin.addEventListener('click', login);
+      btnRegister.addEventListener('click', registerUser);
+      btnLogout.addEventListener('click', logout);
+      btnHome.addEventListener('click', () => window.location.href = 'index.html');
+      btnToHome.addEventListener('click', () => window.location.href = 'index.html');
+      projectForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        const title = document.getElementById('projectTitle').value.trim();
+        const category = document.getElementById('projectCategory').value.trim();
+        const description = document.getElementById('projectDescription').value.trim();
+        const imageInput = document.getElementById('projectImage');
+
+        if (!title || !category || !description) {
+          alert('Заполните все поля проекта');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('category', category);
+        formData.append('description', description);
+        if (imageInput.files.length > 0) {
+          formData.append('image', imageInput.files[0]);
+        }
+
+        try {
+          await fetch(`${API_BASE}/projects.php`, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+          }).then(async response => {
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+              throw new Error(data?.error || 'Ошибка добавления проекта');
+            }
+          });
+
+          document.getElementById('projectForm').reset();
+          await loadProjects();
+          alert('Проект добавлен');
+        } catch (error) {
+          alert(error.message);
+        }
       });
-      allRows = allRows.filter(r => r.id !== id);
-      updateStats();
-      renderTable();
-      showToast('Заявка удалена', 'success');
-    } catch {
-      showToast('Ошибка удаления', 'error');
-    }
-  }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
-  function esc(s) {
-    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function truncate(s, n) { return s.length > n ? s.slice(0, n) + '…' : s; }
-
-  function formatDate(d) {
-    const [y, m, day] = d.split('-');
-    return `${day}.${m}.${y}`;
-  }
-
-  function formatDateTime(dt) {
-    if (!dt) return '—';
-    const d = new Date(dt.endsWith('Z') ? dt : dt + 'Z');
-    const day = String(d.getDate()).padStart(2,'0');
-    const mon = String(d.getMonth()+1).padStart(2,'0');
-    const hr  = String(d.getHours()).padStart(2,'0');
-    const min = String(d.getMinutes()).padStart(2,'0');
-    return `${day}.${mon}.${d.getFullYear()} ${hr}:${min}`;
-  }
-
-  let toastTimer;
-  function showToast(msg, type) {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.className = `show ${type}`;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { el.className = ''; }, 3000);
-  }
-</script>
+      currentUser().then(user => renderUser(user));
+    });
+  </script>
 </body>
 </html>

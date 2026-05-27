@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    BARCODE GENERATION
    ============================================ */
 function generateBarcode(svg) {
@@ -19,17 +19,378 @@ function generateBarcode(svg) {
     svg.appendChild(rect);
   }
 }
+
+const API_BASE = './api';
+let currentUser = null;
+
+async function apiFetch(url, options = {}) {
+  const config = {
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+    },
+    ...options,
+  };
+
+  const response = await fetch(url, config);
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message = data && data.error ? data.error : response.statusText;
+    throw new Error(message || 'Request failed');
+  }
+
+  return data;
+}
+
+async function getCurrentUser() {
+  try {
+    const data = await apiFetch(`${API_BASE}/auth.php?action=current`);
+    return data.user || null;
+  } catch {
+    return null;
+  }
+}
+
+function updateHeader(user) {
+  const loginBtn = document.getElementById('loginBtn');
+  const accountBtn = document.getElementById('accountBtn');
+  const ctaAction = document.getElementById('ctaAction');
+
+  if (!loginBtn || !accountBtn || !ctaAction) {
+    return;
+  }
+
+  currentUser = user;
+
+  if (user) {
+    loginBtn.textContent = 'Выйти';
+    accountBtn.style.display = 'inline-flex';
+    accountBtn.textContent = 'Личный кабинет';
+    ctaAction.textContent = 'Добавить проект';
+  } else {
+    loginBtn.textContent = 'Войти';
+    accountBtn.style.display = 'none';
+    ctaAction.textContent = 'Доступен к работе';
+  }
+
+  loginBtn.onclick = () => {
+    if (currentUser) {
+      logout();
+    } else {
+      window.location.href = 'admin.html';
+    }
+  };
+
+  accountBtn.onclick = () => {
+    window.location.href = 'admin.html';
+  };
+
+  ctaAction.onclick = () => {
+    if (currentUser && currentUser.role === 'admin') {
+      showModal('projectModal');
+    } else {
+      showModal('requestModal');
+    }
+  };
+}
+
+function showModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (!modal) return;
+  modal.classList.add('active');
+  modal.classList.remove('modal-hidden');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeModal() {
+  document.querySelectorAll('.modal').forEach(modal => {
+    modal.classList.remove('active');
+    modal.classList.add('modal-hidden');
+    modal.setAttribute('aria-hidden', 'true');
+  });
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/\"/g, '&quot;');
+}
+
+function attachCategoryAccordion() {
+  const accordion = document.querySelector('.cat-accordion');
+  if (!accordion) return;
+
+  const cols = accordion.querySelectorAll('.cat-col');
+
+  cols.forEach(col => {
+    col.addEventListener('click', function (e) {
+      const expanded = col.querySelector('.cat-expanded');
+      const isCloseBtn = e.target.closest('.cat-close');
+      const isExpandedArea = expanded && expanded.contains(e.target);
+
+      if (isInsideExpanded(e, expanded) && !isCloseBtn) {
+        return;
+      }
+
+      if (col.classList.contains('is-active') || isCloseBtn) {
+        collapseAll();
+      } else {
+        expandCol(col);
+      }
+    });
+  });
+}
+
+function isInsideExpanded(event, expanded) {
+  return expanded && expanded.contains(event.target);
+}
+
+function collapseAll() {
+  document.querySelectorAll('.cat-col').forEach(col => {
+    col.classList.remove('is-active', 'is-shrunk');
+  });
+  document.querySelector('.cat-accordion')?.classList.remove('has-active');
+}
+
+function expandCol(targetCol) {
+  document.querySelectorAll('.cat-col').forEach(col => {
+    col.classList.remove('is-active', 'is-shrunk');
+    if (col !== targetCol) {
+      col.classList.add('is-shrunk');
+    }
+  });
+
+  targetCol.classList.add('is-active');
+  document.querySelector('.cat-accordion')?.classList.add('has-active');
+}
+
+function renderCategories(projects) {
+  const container = document.getElementById('categoriesContainer');
+  if (!container) return;
+
+  if (!projects || projects.length === 0) {
+    container.innerHTML = '<div class="empty-state">Проекты отсутствуют.</div>';
+    return;
+  }
+
+  const grouped = projects.reduce((acc, project) => {
+    const category = project.category ? project.category.trim() : 'Без категории';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(project);
+    return acc;
+  }, {});
+
+  const categoriesHtml = Object.entries(grouped)
+    .map(([category, items], index) => `
+      <div class="cat-col${index === 0 ? ' is-active' : ''}" data-category="${escapeAttr(category)}">
+        <div class="cat-col-inner">
+          <div class="cat-teaser">
+            <div class="cat-teaser-image-wrap">
+              <img src="${items[0].image || 'images/kartinka.jpg'}" class="cat-teaser-image" alt="${escapeAttr(category)}">
+            </div>
+            <div class="cat-teaser-info">
+              <h3 class="cat-title">${escapeHtml(category)}</h3>
+              <span class="cat-count">${items.length} проект${items.length === 1 ? '' : 'а'}</span>
+            </div>
+          </div>
+          <div class="cat-expanded">
+            <div class="cat-expanded-header">
+              <h3 class="cat-title">${escapeHtml(category)}</h3>
+              <button class="cat-close" aria-label="Закрыть">✕</button>
+            </div>
+            <div class="cat-project-list">
+              ${items
+                .map(project => `
+                  <div class="cat-project-item" data-project-id="${project.id}" data-category="${escapeAttr(category)}">
+                    <img src="${project.image || 'images/kartinka.jpg'}" class="cat-project-thumb" alt="${escapeAttr(project.title)}">
+                    <div class="cat-project-info">
+                      <span class="cat-project-year">${formatDateString(project.created_at || '')}</span>
+                      <h4 class="cat-project-title">${escapeHtml(project.title)}</h4>
+                      <p class="cat-project-desc">${escapeHtml(project.description)}</p>
+                    </div>
+                    <span class="cat-project-view">[ View ]</span>
+                  </div>
+                `)
+                .join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `)
+    .join('');
+
+  container.innerHTML = `<div class="cat-accordion">${categoriesHtml}</div>`;
+  attachCategoryAccordion();
+}
+
+function formatDateString(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+  return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+}
+
+async function loadProjects() {
+  try {
+    const data = await apiFetch(`${API_BASE}/projects.php`);
+    renderCategories(data.projects || []);
+  } catch (error) {
+    const container = document.getElementById('categoriesContainer');
+    if (container) {
+      container.innerHTML = `<div class="empty-state">Не удалось загрузить проекты: ${escapeHtml(error.message)}</div>`;
+    }
+  }
+}
+
+async function submitRequest(event) {
+  event.preventDefault();
+  const name = document.getElementById('requestName').value.trim();
+  const email = document.getElementById('requestEmail').value.trim();
+  const phone = document.getElementById('requestPhone').value.trim();
+  const message = document.getElementById('requestMessage').value.trim();
+
+  if (!name || !email || !phone) {
+    showToast('Заполните имя, Email и телефон', 'error');
+    return;
+  }
+
+  try {
+    await apiFetch(`${API_BASE}/request.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, phone, message }),
+    });
+
+    closeModal();
+    document.getElementById('requestForm').reset();
+    showToast('Заявка отправлена', 'success');
+  } catch (error) {
+    showToast(error.message, 'error');
+  }
+}
+
+async function submitProject(event) {
+  event.preventDefault();
+  const title = document.getElementById('projectTitle').value.trim();
+  const category = document.getElementById('projectCategory').value.trim();
+  const description = document.getElementById('projectDescription').value.trim();
+  const imageInput = document.getElementById('projectImage');
+
+  if (!title || !category || !description) {
+    showToast('Заполните название, категорию и описание проекта', 'error');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('category', category);
+  formData.append('description', description);
+
+  if (imageInput.files.length > 0) {
+    formData.append('image', imageInput.files[0]);
+  }
+
+  try {
+    await fetch(`${API_BASE}/projects.php`, {
+      method: 'POST',
+      body: formData,
+      credentials: 'include',
+    }).then(async response => {
+      const data = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(data?.error || 'Ошибка при сохранении проекта');
+      }
+    });
+
+    closeModal();
+    document.getElementById('projectForm').reset();
+    showToast('Проект добавлен', 'success');
+    loadProjects();
+  } catch (error) {
+    showToast(error.message, 'error');
+  }
+}
+
+async function logout() {
+  try {
+    await apiFetch(`${API_BASE}/auth.php?action=logout`, { method: 'POST' });
+  } catch {
+    // ignore
+  }
+
+  currentUser = null;
+  updateHeader(null);
+  showToast('Выход выполнен', 'success');
+  loadProjects();
+}
+
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.className = `show ${type}`;
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => {
+    toast.className = '';
+  }, 3000);
+}
+
+function setupModalButtons() {
+  document.querySelectorAll('[data-modal-close]').forEach(button => {
+    button.addEventListener('click', closeModal);
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      closeModal();
+    }
+  });
+}
+
+function setupProjectForm() {
+  const requestForm = document.getElementById('requestForm');
+  const projectForm = document.getElementById('projectForm');
+
+  if (requestForm) {
+    requestForm.addEventListener('submit', submitRequest);
+  }
+
+  if (projectForm) {
+    projectForm.addEventListener('submit', submitProject);
+  }
+}
+
+async function initSite() {
+  const user = await getCurrentUser();
+  updateHeader(user);
+  setupModalButtons();
+  setupProjectForm();
+  await loadProjects();
+}
+
 /* ============================================
    SMOOTH SCROLLING & PAGE INITIALIZATION
    ============================================ */
-document.addEventListener('DOMContentLoaded', function() {
-  // Initialize barcodes
+document.addEventListener('DOMContentLoaded', function () {
   const barcodes = document.querySelectorAll('.barcode');
   barcodes.forEach(barcode => {
     generateBarcode(barcode);
   });
 
-  // Smooth scrolling for anchor links
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       const href = this.getAttribute('href');
@@ -40,19 +401,18 @@ document.addEventListener('DOMContentLoaded', function() {
       if (target) {
         target.scrollIntoView({
           behavior: 'smooth',
-          block: 'start'
+          block: 'start',
         });
       }
     });
   });
 
-  // Section fade-in animation
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (!prefersReducedMotion) {
     const EASE_OUT = 'cubic-bezier(0.23, 1, 0.32, 1)';
 
-    const observer = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.style.opacity = '1';
@@ -69,8 +429,7 @@ document.addEventListener('DOMContentLoaded', function() {
       observer.observe(section);
     });
 
-    // Stagger observer for experience items and tech list
-    const staggerObserver = new IntersectionObserver((entries) => {
+    const staggerObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-visible');
@@ -88,19 +447,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Scroll to top button functionality
   const scrollToTopBtn = document.getElementById('scrollToTopBtn');
   const heroSection = document.getElementById('hero');
 
   if (scrollToTopBtn && heroSection) {
-    // Show/hide button based on hero section visibility
-    const heroObserver = new IntersectionObserver((entries) => {
+    const heroObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // Hero is visible, hide the button
           scrollToTopBtn.classList.remove('show');
         } else {
-          // Hero is not visible, show the button
           scrollToTopBtn.classList.add('show');
         }
       });
@@ -108,215 +463,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
     heroObserver.observe(heroSection);
 
-    // Scroll to top on button click
     scrollToTopBtn.addEventListener('click', () => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
-});
 
-/* ============================================
-   PROJECTS DATA
-   ============================================ */
-const projectsData = {
-  featured: [
-    {
-      id: 'vremena',
-      title: 'ВРЕМЕНА ГОДА 2025',
-      year: '2025',
-      category: 'Айдентика',
-      image: 'images/vremena2.png',
-      description: 'Дизайн айдентики и сайт для цифровой инсталляции "Четыре" в рамках премьеры спектакля в театре.',
-      link: 'http://vremenagoda.4.tilda.ws/'
-    },
-    {
-      id: 'ktya',
-      title: 'КТЯ',
-      year: '2024',
-      category: 'Графический дизайн',
-      image: 'images/ktya.jpg',
-      description: 'Требуется дополнительная информация...',
-      link: null
-    }
-  ],
-  categories: {
-    design: {
-      label: 'Графический дизайн',
-      teaserImage: 'images/kartinka.jpg',
-      projects: [
-        { id: 1, title: 'Актёр суперсемейки', year: '2023', image: 'images/kartinka.jpg', description: 'Пару раз пролетал над Нью-Йорком', link: null },
-        { id: 4, title: 'КТЯ', year: '2024', image: 'images/ktya.jpg', description: 'Требуется дополнительная информация...', link: null }
-      ]
-    },
-    photo: {
-      label: 'Фотография',
-      teaserImage: 'images/2.jpg',
-      projects: [
-        { id: 2, title: 'Тюльбан', year: '2022', image: 'images/2.jpg', description: 'ТЮЛЬБАН', link: null },
-        { id: 5, title: 'Кот на планете', year: '2021', image: 'images/1.jpg', description: 'Первый проект для школьной выставки', link: null }
-      ]
-    },
-    video: {
-      label: 'Видеоконтент',
-      teaserImage: 'images/kit.jpg',
-      projects: [
-        { id: 3, title: '4D-проекция кота', year: '2023', image: 'images/kit.jpg', description: 'Создание 4-мерной мэппинг-проекции кота на здание ЕАСИ', link: null }
-      ]
-    }
-  }
-};
-
-/* ============================================
-   CATEGORY ACCORDION
-   ============================================ */
-document.addEventListener('DOMContentLoaded', function () {
-  const accordion = document.querySelector('.cat-accordion');
-  if (!accordion) return;
-
-  const cols = accordion.querySelectorAll('.cat-col');
-
-  cols.forEach(col => {
-    col.addEventListener('click', function (e) {
-      const expanded = col.querySelector('.cat-expanded');
-      const isInsideExpanded = expanded && expanded.contains(e.target);
-      const isCloseBtn = e.target.closest('.cat-close');
-
-      if (isInsideExpanded && !isCloseBtn) return;
-
-      if (col.classList.contains('is-active')) {
-        collapseAll();
-      } else {
-        expandCol(col);
-      }
-    });
-  });
-
-  function expandCol(targetCol) {
-    cols.forEach(col => col.classList.remove('is-active', 'is-shrunk'));
-    targetCol.classList.add('is-active');
-    cols.forEach(col => { if (col !== targetCol) col.classList.add('is-shrunk'); });
-    accordion.classList.add('has-active');
-  }
-
-  function collapseAll() {
-    cols.forEach(col => col.classList.remove('is-active', 'is-shrunk'));
-    accordion.classList.remove('has-active');
-  }
-});
-
-/* ============================================
-   MODAL SYSTEM
-   ============================================ */
-document.addEventListener('DOMContentLoaded', function () {
-  const modal = document.getElementById('imageModal');
-  if (!modal) return;
-
-  const closeBtn = modal.querySelector('.modal-close');
-  const prevBtn  = modal.querySelector('.modal-prev');
-  const nextBtn  = modal.querySelector('.modal-next');
-  let currentModal = { category: null, index: null };
-
-  document.addEventListener('click', function (e) {
-    const item = e.target.closest('.cat-project-item');
-    if (!item) return;
-
-    const category = item.dataset.category;
-    const id = parseInt(item.dataset.projectId);
-    const projects = projectsData.categories[category]?.projects || [];
-    const index = projects.findIndex(p => p.id === id);
-
-    if (index === -1) return;
-    openModal(category, index);
-  });
-
-  function openModal(category, index) {
-    const projects = projectsData.categories[category].projects;
-    const project  = projects[index];
-    currentModal = { category, index };
-
-    modal.querySelector('#modalImage').src = project.image;
-    modal.querySelector('#modalTitle').textContent = project.title;
-    modal.querySelector('#modalDescription').textContent = project.description;
-
-    prevBtn.disabled = index === 0;
-    nextBtn.disabled = index === projects.length - 1;
-
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeModal() {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-    currentModal = { category: null, index: null };
-  }
-
-  prevBtn.addEventListener('click', function () {
-    if (currentModal.index > 0) openModal(currentModal.category, currentModal.index - 1);
-  });
-
-  nextBtn.addEventListener('click', function () {
-    const projects = projectsData.categories[currentModal.category]?.projects || [];
-    if (currentModal.index < projects.length - 1) openModal(currentModal.category, currentModal.index + 1);
-  });
-
-  closeBtn.addEventListener('click', closeModal);
-
-  modal.addEventListener('click', function (e) {
-    if (e.target === modal) closeModal();
-  });
-
-  document.addEventListener('keydown', function (e) {
-    if (!modal.classList.contains('active')) return;
-    if (e.key === 'Escape')     closeModal();
-    if (e.key === 'ArrowLeft')  prevBtn.click();
-    if (e.key === 'ArrowRight') nextBtn.click();
-  });
+  initSite();
 });
 
 /* ============================================
    VISITOR COUNTER & TIME TRACKING
    ============================================ */
-document.addEventListener('DOMContentLoaded', function () {
-  const visitKey    = 'portfolio_visits';
-  const totalTimeKey = 'portfolio_total_time';
+let visits = parseInt(localStorage.getItem('portfolio_visits')) || 0;
+visits++;
+localStorage.setItem('portfolio_visits', visits);
+let totalTime = parseInt(localStorage.getItem('portfolio_total_time')) || 0;
+const visitStatsElement = document.getElementById('visit-stats');
+if (visitStatsElement) visitStatsElement.textContent = `Визитов: ${visits}`;
 
-  let visits = parseInt(localStorage.getItem(visitKey)) || 0;
-  visits++;
-  localStorage.setItem(visitKey, visits);
+function formatTime(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  if (hours > 0) return `${hours}/${minutes}/${secs}`;
+  if (minutes > 0) return `${minutes}/${secs}`;
+  return `${secs}`;
+}
 
-  let totalTime = parseInt(localStorage.getItem(totalTimeKey)) || 0;
+const timeSpentElement = document.getElementById('time-spent');
+if (timeSpentElement) timeSpentElement.textContent = formatTime(totalTime);
 
-  const visitStatsElement = document.getElementById('visit-stats');
-  if (visitStatsElement) visitStatsElement.textContent = `Визитов: ${visits}`;
-
-  function formatTime(seconds) {
-    const hours   = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs    = seconds % 60;
-    if (hours > 0)   return `${hours}/${minutes}/${secs}`;
-    if (minutes > 0) return `${minutes}/${secs}`;
-    return `${secs}`;
-  }
-
-  const timeSpentElement = document.getElementById('time-spent');
+const sessionStart = Date.now();
+const timeInterval = setInterval(() => {
+  totalTime++;
+  localStorage.setItem('portfolio_total_time', totalTime);
   if (timeSpentElement) timeSpentElement.textContent = formatTime(totalTime);
+}, 1000);
 
-  const sessionStart = Date.now();
-
-  const timeInterval = setInterval(() => {
-    totalTime++;
-    localStorage.setItem(totalTimeKey, totalTime);
-    if (timeSpentElement) timeSpentElement.textContent = formatTime(totalTime);
-  }, 1000);
-
-  window.addEventListener('beforeunload', () => {
-    clearInterval(timeInterval);
-    const finalTime = Math.floor((Date.now() - sessionStart) / 1000);
-    const currentTotal = parseInt(localStorage.getItem(totalTimeKey)) || 0;
-    localStorage.setItem(totalTimeKey, currentTotal + finalTime);
-  });
+window.addEventListener('beforeunload', () => {
+  clearInterval(timeInterval);
+  const finalTime = Math.floor((Date.now() - sessionStart) / 1000);
+  const currentTotal = parseInt(localStorage.getItem('portfolio_total_time')) || 0;
+  localStorage.setItem('portfolio_total_time', currentTotal + finalTime);
 });

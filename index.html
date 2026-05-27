@@ -28,18 +28,18 @@
       <div class="gradient"></div>
     </div>
     <div class="container">
-        <div class="location">
-          <p>Russian Federation</p>
-          <p>Г. ЕКАТЕРИНБУРГ</p>
+        <div class="location" id="locationControls">
+          <button id="loginBtn" class="btn-ghost" style="margin-right:8px">Войти</button>
+          <button id="accountBtn" class="btn-ghost" style="display:none">Личный кабинет</button>
         </div>
         <a href="#hero" class="logo">I. A. KLIMOV</a>
         <div class="cta-header">
-          <a href="work.html" class="btn-primary" rel="noopener">
+          <button id="ctaAction" class="btn-primary" type="button">
             <span>Доступен к работе</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/>
             </svg>
-          </a>
+          </button>
         </div>
     </div>
   </header>
@@ -189,124 +189,7 @@
   <section id="categories" class="categories">
     <div class="container">
       <p class="section-label">КАТЕГОРИИ КОНТЕНТА</p>
-
-      <div class="cat-accordion">
-
-        <!-- Column: Графический дизайн -->
-        <div class="cat-col" data-category="design">
-          <div class="cat-col-inner">
-            <div class="cat-teaser">
-              <div class="cat-teaser-image-wrap">
-                <img src="images/kartinka.jpg" class="cat-teaser-image" alt="Графический дизайн">
-              </div>
-              <div class="cat-teaser-info">
-                <h3 class="cat-title">Графический<br>дизайн</h3>
-                <span class="cat-count">2 проекта</span>
-              </div>
-            </div>
-            <div class="cat-expanded">
-              <div class="cat-expanded-header">
-                <h3 class="cat-title">Графический дизайн</h3>
-                <button class="cat-close" aria-label="Закрыть">✕</button>
-              </div>
-              <div class="cat-project-list">
-                <div class="cat-project-item" data-project-id="1" data-category="design">
-                  <img src="images/kartinka.jpg" class="cat-project-thumb" alt="Актёр суперсемейки">
-                  <div class="cat-project-info">
-                    <span class="cat-project-year">2023</span>
-                    <h4 class="cat-project-title">Актёр суперсемейки</h4>
-                    <p class="cat-project-desc">Пару раз пролетал над Нью-Йорком</p>
-                  </div>
-                  <span class="cat-project-view">[ View ]</span>
-                </div>
-                <div class="cat-project-item" data-project-id="4" data-category="design">
-                  <img src="images/ktya.jpg" class="cat-project-thumb" alt="КТЯ">
-                  <div class="cat-project-info">
-                    <span class="cat-project-year">2024</span>
-                    <h4 class="cat-project-title">КТЯ</h4>
-                    <p class="cat-project-desc">Требуется дополнительная информация...</p>
-                  </div>
-                  <span class="cat-project-view">[ View ]</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Column: Фотография -->
-        <div class="cat-col" data-category="photo">
-          <div class="cat-col-inner">
-            <div class="cat-teaser">
-              <div class="cat-teaser-image-wrap">
-                <img src="images/2.jpg" class="cat-teaser-image" alt="Фотография">
-              </div>
-              <div class="cat-teaser-info">
-                <h3 class="cat-title">Фотография</h3>
-                <span class="cat-count">2 проекта</span>
-              </div>
-            </div>
-            <div class="cat-expanded">
-              <div class="cat-expanded-header">
-                <h3 class="cat-title">Фотография</h3>
-                <button class="cat-close" aria-label="Закрыть">✕</button>
-              </div>
-              <div class="cat-project-list">
-                <div class="cat-project-item" data-project-id="2" data-category="photo">
-                  <img src="images/2.jpg" class="cat-project-thumb" alt="Тюльбан">
-                  <div class="cat-project-info">
-                    <span class="cat-project-year">2022</span>
-                    <h4 class="cat-project-title">Тюльбан</h4>
-                    <p class="cat-project-desc">ТЮЛЬБАН</p>
-                  </div>
-                  <span class="cat-project-view">[ View ]</span>
-                </div>
-                <div class="cat-project-item" data-project-id="5" data-category="photo">
-                  <img src="images/1.jpg" class="cat-project-thumb" alt="Кот на планете">
-                  <div class="cat-project-info">
-                    <span class="cat-project-year">2021</span>
-                    <h4 class="cat-project-title">Кот на планете</h4>
-                    <p class="cat-project-desc">Первый проект для школьной выставки</p>
-                  </div>
-                  <span class="cat-project-view">[ View ]</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Column: Видеоконтент -->
-        <div class="cat-col" data-category="video">
-          <div class="cat-col-inner">
-            <div class="cat-teaser">
-              <div class="cat-teaser-image-wrap">
-                <img src="images/kit.jpg" class="cat-teaser-image" alt="Видеоконтент">
-              </div>
-              <div class="cat-teaser-info">
-                <h3 class="cat-title">Видеоконтент</h3>
-                <span class="cat-count">1 проект</span>
-              </div>
-            </div>
-            <div class="cat-expanded">
-              <div class="cat-expanded-header">
-                <h3 class="cat-title">Видеоконтент</h3>
-                <button class="cat-close" aria-label="Закрыть">✕</button>
-              </div>
-              <div class="cat-project-list">
-                <div class="cat-project-item" data-project-id="3" data-category="video">
-                  <img src="images/kit.jpg" class="cat-project-thumb" alt="4D-проекция кота">
-                  <div class="cat-project-info">
-                    <span class="cat-project-year">2023</span>
-                    <h4 class="cat-project-title">4D-проекция кота</h4>
-                    <p class="cat-project-desc">Создание 4-мерной мэппинг-проекции кота на здание ЕАСИ</p>
-                  </div>
-                  <span class="cat-project-view">[ View ]</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- .cat-accordion -->
+      <div id="categoriesContainer" class="cat-accordion"></div>
     </div>
   </section>
 
@@ -419,6 +302,48 @@
         <button class="modal-btn modal-prev">&larr; Пред.</button>
         <button class="modal-btn modal-next">След. &rarr;</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       REQUEST / PROJECT MODALS
+       ============================================ -->
+  <div id="requestModal" class="modal modal-hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <div class="modal-card">
+      <h2>Отправить заявку</h2>
+      <p class="modal-subtitle">Оставьте контакты, и я свяжусь с вами.</p>
+      <form id="requestForm" class="form-grid">
+        <input type="text" id="requestName" placeholder="Ваше имя" required>
+        <input type="email" id="requestEmail" placeholder="Email" required>
+        <input type="tel" id="requestPhone" placeholder="Телефон" required>
+        <textarea id="requestMessage" rows="4" placeholder="Описание задачи"></textarea>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" data-modal-close>Отмена</button>
+          <button type="submit" class="btn btn-primary">Отправить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="projectModal" class="modal modal-hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <div class="modal-card">
+      <h2>Новый проект</h2>
+      <p class="modal-subtitle">Добавьте проект, чтобы он сразу появился в Категориях.</p>
+      <form id="projectForm" class="form-grid" enctype="multipart/form-data">
+        <input type="text" id="projectCategory" placeholder="Категория" required>
+        <input type="text" id="projectTitle" placeholder="Название проекта" required>
+        <textarea id="projectDescription" rows="4" placeholder="Описание проекта" required></textarea>
+        <label class="file-field">
+          <span>Выберите фото проекта</span>
+          <input id="projectImage" type="file" accept="image/jpeg,image/png,image/webp">
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" data-modal-close>Отмена</button>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
     </div>
   </div>
 
