@@ -55,6 +55,39 @@ async function getCurrentUser() {
   }
 }
 
+function updateRequestForm(user) {
+  const emailWrapper = document.getElementById('requestEmailWrapper');
+  const phoneWrapper = document.getElementById('requestPhoneWrapper');
+  const emailInput = document.getElementById('requestEmail');
+  const phoneInput = document.getElementById('requestPhone');
+
+  if (!emailWrapper || !phoneWrapper || !emailInput || !phoneInput) {
+    return;
+  }
+
+  if (user && user.role !== 'admin') {
+    emailWrapper.style.display = 'none';
+    phoneWrapper.style.display = 'none';
+    emailInput.value = user.email || '';
+    phoneInput.value = user.phone || '';
+    emailInput.required = false;
+    phoneInput.required = false;
+    emailInput.disabled = true;
+    phoneInput.disabled = true;
+  } else {
+    emailWrapper.style.display = '';
+    phoneWrapper.style.display = '';
+    emailInput.disabled = false;
+    phoneInput.disabled = false;
+    emailInput.required = true;
+    phoneInput.required = true;
+    if (!user) {
+      emailInput.value = '';
+      phoneInput.value = '';
+    }
+  }
+}
+
 function updateHeader(user) {
   const loginBtn = document.getElementById('loginBtn');
   const accountBtn = document.getElementById('accountBtn');
@@ -70,7 +103,7 @@ function updateHeader(user) {
     loginBtn.textContent = 'Выйти';
     accountBtn.style.display = 'inline-flex';
     accountBtn.textContent = 'Личный кабинет';
-    ctaAction.textContent = 'Добавить проект';
+    ctaAction.textContent = user.role === 'admin' ? 'Добавить проект' : 'Отправить заявку';
   } else {
     loginBtn.textContent = 'Войти';
     accountBtn.style.display = 'none';
@@ -217,7 +250,7 @@ function renderCategories(projects) {
                   <div class="cat-project-item" data-project-id="${project.id}" data-category="${escapeAttr(category)}">
                     <img src="${project.image || 'images/kartinka.jpg'}" class="cat-project-thumb" alt="${escapeAttr(project.title)}">
                     <div class="cat-project-info">
-                      <span class="cat-project-year">${formatDateString(project.created_at || '')}</span>
+                      <span class="cat-project-year">${escapeHtml(project.project_date || formatDateString(project.created_at || ''))}</span>
                       <h4 class="cat-project-title">${escapeHtml(project.title)}</h4>
                       <p class="cat-project-desc">${escapeHtml(project.description)}</p>
                     </div>
@@ -239,7 +272,7 @@ function renderCategories(projects) {
           <img src="${project.image || 'images/kartinka.jpg'}" alt="${escapeAttr(project.title)}">
         </div>
         <div class="simple-project-card-body">
-          <div class="simple-project-card-meta">${escapeHtml(project.category)} · ${escapeHtml(formatDateString(project.created_at || ''))}</div>
+          <div class="simple-project-card-meta">${escapeHtml(project.category)} · ${escapeHtml(project.project_date || formatDateString(project.created_at || ''))}</div>
           <h4>${escapeHtml(project.title)}</h4>
           <p>${escapeHtml(project.description)}</p>
         </div>
@@ -336,12 +369,31 @@ async function loadProjects() {
 async function submitRequest(event) {
   event.preventDefault();
   const name = document.getElementById('requestName').value.trim();
-  const email = document.getElementById('requestEmail').value.trim();
-  const phone = document.getElementById('requestPhone').value.trim();
+  const emailInput = document.getElementById('requestEmail');
+  const phoneInput = document.getElementById('requestPhone');
+  const email = emailInput ? emailInput.value.trim() : '';
+  const phone = phoneInput ? phoneInput.value.trim() : '';
   const message = document.getElementById('requestMessage').value.trim();
 
-  if (!name || !email || !phone) {
-    showToast('Заполните имя, Email и телефон', 'error');
+  const isAuthorizedUser = currentUser && currentUser.role !== 'admin';
+
+  if (!name) {
+    showToast('Заполните имя', 'error');
+    return;
+  }
+
+  if (!isAuthorizedUser && (!email || !phone)) {
+    showToast('Заполните Email и телефон', 'error');
+    return;
+  }
+
+  if (!isAuthorizedUser && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    showToast('Укажите корректный Email', 'error');
+    return;
+  }
+
+  if (!isAuthorizedUser && !/^\+?\d{7,15}$/.test(phone)) {
+    showToast('Телефон должен содержать только цифры и возможно +', 'error');
     return;
   }
 
@@ -351,7 +403,12 @@ async function submitRequest(event) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, email, phone, message }),
+      body: JSON.stringify({
+        name,
+        email: isAuthorizedUser ? currentUser.email : email,
+        phone: isAuthorizedUser ? currentUser.phone : phone,
+        message,
+      }),
     });
 
     closeModal();
@@ -362,15 +419,74 @@ async function submitRequest(event) {
   }
 }
 
+function formatProjectDateInput(value) {
+  const digits = value.replace(/\D/g, '').slice(0, 8);
+  if (digits.length <= 2) {
+    return digits;
+  }
+
+  if (digits.length <= 4) {
+    return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+  }
+
+  return `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`;
+}
+
+function setupProjectDateMask() {
+  const projectDateInput = document.getElementById('projectDate');
+  if (!projectDateInput) {
+    return;
+  }
+
+  projectDateInput.addEventListener('input', () => {
+    projectDateInput.value = formatProjectDateInput(projectDateInput.value);
+  });
+}
+
+function setupProjectImagePreview() {
+  const imageInput = document.getElementById('projectImage');
+  const previewContainer = document.getElementById('projectImagePreview');
+  const previewImg = document.getElementById('projectImagePreviewImg');
+  const clearBtn = document.getElementById('projectImageClearBtn');
+
+  if (!imageInput || !previewContainer || !previewImg || !clearBtn) {
+    return;
+  }
+
+  imageInput.addEventListener('change', () => {
+    if (!imageInput.files || imageInput.files.length === 0) {
+      previewContainer.classList.add('hidden');
+      previewImg.src = '';
+      return;
+    }
+
+    const file = imageInput.files[0];
+    previewImg.src = URL.createObjectURL(file);
+    previewContainer.classList.remove('hidden');
+  });
+
+  clearBtn.addEventListener('click', () => {
+    imageInput.value = '';
+    previewContainer.classList.add('hidden');
+    previewImg.src = '';
+  });
+}
+
 async function submitProject(event) {
   event.preventDefault();
   const title = document.getElementById('projectTitle').value.trim();
   const category = document.getElementById('projectCategory').value.trim();
   const description = document.getElementById('projectDescription').value.trim();
+  const projectDate = document.getElementById('projectDate').value.trim();
   const imageInput = document.getElementById('projectImage');
 
-  if (!title || !category || !description) {
-    showToast('Заполните название, категорию и описание проекта', 'error');
+  if (!title || !category || !description || !projectDate) {
+    showToast('Заполните название, категорию, дату и описание проекта', 'error');
+    return;
+  }
+
+  if (!/^\d{2}\.\d{2}\.\d{4}$/.test(projectDate)) {
+    showToast('Дата проекта должна быть в формате dd.mm.yyyy', 'error');
     return;
   }
 
@@ -378,25 +494,36 @@ async function submitProject(event) {
   formData.append('title', title);
   formData.append('category', category);
   formData.append('description', description);
+  formData.append('project_date', projectDate);
 
-  if (imageInput.files.length > 0) {
+  if (imageInput && imageInput.files.length > 0) {
     formData.append('image', imageInput.files[0]);
   }
 
   try {
-    await fetch(`${API_BASE}/projects.php`, {
+    const response = await fetch(`${API_BASE}/projects.php`, {
       method: 'POST',
       body: formData,
       credentials: 'include',
-    }).then(async response => {
-      const data = await response.json().catch(() => null);
-      if (!response.ok) {
-        throw new Error(data?.error || 'Ошибка при сохранении проекта');
-      }
     });
 
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(data?.error || 'Ошибка при сохранении проекта');
+    }
+
     closeModal();
-    document.getElementById('projectForm').reset();
+    const projectForm = document.getElementById('projectForm');
+    if (projectForm) {
+      projectForm.reset();
+    }
+    const previewContainer = document.getElementById('projectImagePreview');
+    const previewImg = document.getElementById('projectImagePreviewImg');
+    if (previewContainer && previewImg) {
+      previewContainer.classList.add('hidden');
+      previewImg.src = '';
+    }
+
     showToast('Проект добавлен', 'success');
     loadProjects();
   } catch (error) {
@@ -467,12 +594,15 @@ function setupProjectForm() {
 
   if (projectForm) {
     projectForm.addEventListener('submit', submitProject);
+    setupProjectDateMask();
+    setupProjectImagePreview();
   }
 }
 
 async function initSite() {
   const user = await getCurrentUser();
   updateHeader(user);
+  updateRequestForm(user);
   setupModalButtons();
   setupProjectForm();
   await loadProjects();

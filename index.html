@@ -315,8 +315,12 @@
       <p class="modal-subtitle">Оставьте контакты, и я свяжусь с вами.</p>
       <form id="requestForm" class="form-grid">
         <input type="text" id="requestName" placeholder="Ваше имя" required>
-        <input type="email" id="requestEmail" placeholder="Email" required>
-        <input type="tel" id="requestPhone" placeholder="Телефон" required>
+        <div id="requestEmailWrapper">
+          <input type="email" id="requestEmail" placeholder="Email" required>
+        </div>
+        <div id="requestPhoneWrapper">
+          <input type="tel" id="requestPhone" placeholder="Телефон" required>
+        </div>
         <textarea id="requestMessage" rows="4" placeholder="Описание задачи"></textarea>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" data-modal-close>Отмена</button>
@@ -332,13 +336,23 @@
       <h2>Новый проект</h2>
       <p class="modal-subtitle">Добавьте проект, чтобы он сразу появился в Категориях.</p>
       <form id="projectForm" class="form-grid" enctype="multipart/form-data">
-        <input type="text" id="projectCategory" placeholder="Категория" required>
+        <select id="projectCategory" required>
+          <option value="">Выберите категорию</option>
+          <option value="Графический дизайн">Графический дизайн</option>
+          <option value="Фотография">Фотография</option>
+          <option value="Видеоконтент">Видеоконтент</option>
+        </select>
         <input type="text" id="projectTitle" placeholder="Название проекта" required>
+        <input type="text" id="projectDate" placeholder="Дата проекта (dd.mm.yyyy)" pattern="\d{2}\.\d{2}\.\d{4}" required>
         <textarea id="projectDescription" rows="4" placeholder="Описание проекта" required></textarea>
         <label class="file-field">
           <span>Выберите фото проекта</span>
           <input id="projectImage" type="file" accept="image/jpeg,image/png,image/webp">
         </label>
+        <div class="image-preview hidden" id="projectImagePreview">
+          <img id="projectImagePreviewImg" src="" alt="Превью изображения проекта">
+          <button type="button" class="btn btn-ghost" id="projectImageClearBtn">Удалить</button>
+        </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" data-modal-close>Отмена</button>
           <button type="submit" class="btn btn-primary">Сохранить</button>

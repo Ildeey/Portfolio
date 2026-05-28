@@ -26,6 +26,18 @@ if ($method === 'POST' && $action === 'register') {
         jsonResponse(['error' => 'Required fields are missing'], 400);
     }
 
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        jsonResponse(['error' => 'Invalid email address'], 400);
+    }
+
+    if (!preg_match('/^\+?\d{7,15}$/', $phone)) {
+        jsonResponse(['error' => 'Phone must contain only digits and optionally start with +'], 400);
+    }
+
+    if (strlen($password) < 8) {
+        jsonResponse(['error' => 'Password must be at least 8 characters long'], 400);
+    }
+
     $pdo = getPDO();
     $exists = $pdo->prepare('SELECT id FROM users WHERE username = ? OR email = ? LIMIT 1');
     $exists->execute([$username, $email]);

@@ -67,11 +67,12 @@
         <section id="registerPanel" class="card-panel hidden">
           <h2 class="section-title">Регистрация</h2>
           <div class="field-grid">
-            <input id="regUser" type="text" placeholder="Имя пользователя" autocomplete="username">
-            <input id="regEmail" type="email" placeholder="Email" autocomplete="email">
-            <input id="regPhone" type="tel" placeholder="Телефон">
-            <input id="regPass" type="password" placeholder="Пароль" autocomplete="new-password">
+            <input id="regUser" type="text" placeholder="Имя пользователя" autocomplete="username" required>
+            <input id="regEmail" type="email" placeholder="Email" autocomplete="email" required>
+            <input id="regPhone" type="tel" placeholder="Телефон" autocomplete="tel" pattern="\+?\d{7,15}" title="Телефон должен содержать только цифры, возможно с +" required>
+            <input id="regPass" type="password" placeholder="Пароль" autocomplete="new-password" minlength="8" required>
           </div>
+          <p class="admin-note">Телефон вводится в формате +79991234567 или 89991234567. Пароль не менее 8 символов.</p>
           <button class="btn btn-primary" id="btnRegister">Зарегистрироваться</button>
         </section>
       </div>
@@ -84,14 +85,25 @@
             <h2 class="section-title">Добавить проект</h2>
             <form id="projectForm">
               <div class="field-grid">
-                <input id="projectCategory" type="text" placeholder="Категория" required>
+                <select id="projectCategory" required>
+                  <option value="">Выберите категорию</option>
+                  <option value="Графический дизайн">Графический дизайн</option>
+                  <option value="Фотография">Фотография</option>
+                  <option value="Видеоконтент">Видеоконтент</option>
+                </select>
                 <input id="projectTitle" type="text" placeholder="Название проекта" required>
+                <input id="projectDate" type="text" placeholder="Дата проекта (dd.mm.yyyy)" pattern="\d{2}\.\d{2}\.\d{4}" required>
                 <textarea id="projectDescription" rows="4" placeholder="Описание проекта" required></textarea>
                 <label class="file-field">
                   <span>Выбрать фото проекта</span>
                   <input id="projectImage" type="file" accept="image/jpeg,image/png,image/webp">
                 </label>
+                <div class="image-preview hidden" id="projectImagePreview">
+                  <img id="projectImagePreviewImg" src="" alt="Превью изображения проекта">
+                  <button type="button" class="btn btn-ghost" id="projectImageClearBtn">Удалить</button>
+                </div>
               </div>
+              <p class="admin-note">Загрузите изображение до 5 МБ в формате JPG, PNG или WEBP.</p>
               <button class="btn btn-primary" id="btnSaveProject" type="submit">Добавить проект</button>
             </form>
           </div>
@@ -104,10 +116,27 @@
 
         <div id="clientSection" class="dashboard-grid hidden">
           <h2 class="section-title">Пользовательский кабинет</h2>
-          <p class="admin-note">Вы вошли как пользователь. Запросы отправляются через главную страницу.</p>
-          <button class="btn btn-primary" id="btnToHome">Перейти на главную</button>
+          <p class="admin-note">Вы вошли как пользователь. Здесь отображаются ваши заявки.</p>
+          <button class="btn btn-primary" id="btnNewRequest">Отправить заявку</button>
+          <div id="requestsList" class="project-list"></div>
         </div>
       </section>
+    </div>
+  </div>
+
+  <div id="requestModal" class="modal modal-hidden" aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <div class="modal-card">
+      <h2>Отправить заявку</h2>
+      <p class="modal-subtitle">Оставьте контакты, и я свяжусь с вами.</p>
+      <form id="requestForm" class="form-grid">
+        <input type="text" id="requestName" placeholder="Ваше имя" required>
+        <textarea id="requestMessage" rows="4" placeholder="Описание задачи" required></textarea>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" data-modal-close>Отмена</button>
+          <button type="submit" class="btn btn-primary">Отправить</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -125,10 +154,13 @@
     const btnLogout = document.getElementById('btnLogout');
     const btnHome = document.getElementById('btnHome');
     const btnToHome = document.getElementById('btnToHome');
+    const btnNewRequest = document.getElementById('btnNewRequest');
     const btnLogin = document.getElementById('btnLogin');
     const btnRegister = document.getElementById('btnRegister');
     const projectForm = document.getElementById('projectForm');
     const projectList = document.getElementById('projectList');
+    const requestForm = document.getElementById('requestForm');
+    const requestsList = document.getElementById('requestsList');
 
     function apiFetch(url, options = {}) {
       return fetch(url, { credentials: 'include', headers: { Accept: 'application/json' }, ...options })
@@ -240,8 +272,40 @@
       } else {
         clientSection.classList.remove('hidden');
         adminSection.classList.add('hidden');
-        document.getElementById('dashboardText').textContent = 'Вы вошли как пользователь. Запросы отправляются через главную страницу.';
+        document.getElementById('dashboardText').textContent = 'Вы вошли как пользователь. Ниже отображаются ваши заявки.';
+        loadRequests();
       }
+    }
+
+    async function loadRequests() {
+      if (!requestsList) return;
+
+      try {
+        const data = await apiFetch(`${API_BASE}/request.php`);
+        renderRequestList(data.requests || []);
+      } catch (error) {
+        requestsList.innerHTML = `<div class="admin-note">${escapeHtml(error.message)}</div>`;
+      }
+    }
+
+    function renderRequestList(requests) {
+      if (!requestsList) return;
+      if (!requests || requests.length === 0) {
+        requestsList.innerHTML = '<div class="admin-note">Заявки отсутствуют.</div>';
+        return;
+      }
+
+      requestsList.innerHTML = requests
+        .map(request => `
+          <div class="project-card">
+            <div>
+              <h4>${escapeHtml(request.name)}</h4>
+              <p class="project-card-meta">${escapeHtml(request.created_at)}</p>
+              <p>${escapeHtml(request.message)}</p>
+            </div>
+          </div>
+        `)
+        .join('');
     }
 
     function renderProjectList(projects) {
@@ -256,7 +320,7 @@
           <div class="project-card">
             <div>
               <h4>${escapeHtml(project.title)}</h4>
-              <p class="project-card-meta">${escapeHtml(project.category)} · ${escapeHtml(formatDate(project.created_at))}</p>
+              <p class="project-card-meta">${escapeHtml(project.category)} · ${escapeHtml(project.project_date || formatDate(project.created_at))}</p>
               <p>${escapeHtml(project.description)}</p>
             </div>
             <div class="project-card-actions">
@@ -289,11 +353,78 @@
         .replace(/'/g, '&#039;');
     }
 
+    function showModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+      modal.classList.add('active');
+      modal.classList.remove('modal-hidden');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.remove('active');
+        modal.classList.add('modal-hidden');
+        modal.setAttribute('aria-hidden', 'true');
+      });
+    }
+
     function formatDate(value) {
       if (!value) return '';
       const date = new Date(value);
       if (Number.isNaN(date.getTime())) return value;
       return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+    }
+
+    function formatProjectDateInput(value) {
+      const digits = value.replace(/\D/g, '').slice(0, 8);
+      if (digits.length <= 2) {
+        return digits;
+      }
+
+      if (digits.length <= 4) {
+        return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+      }
+
+      return `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`;
+    }
+
+    function setupProjectDateMask() {
+      const projectDateInput = document.getElementById('projectDate');
+      if (!projectDateInput) return;
+
+      projectDateInput.addEventListener('input', () => {
+        projectDateInput.value = formatProjectDateInput(projectDateInput.value);
+      });
+    }
+
+    function setupProjectImagePreview() {
+      const imageInput = document.getElementById('projectImage');
+      const previewContainer = document.getElementById('projectImagePreview');
+      const previewImg = document.getElementById('projectImagePreviewImg');
+      const clearBtn = document.getElementById('projectImageClearBtn');
+
+      if (!imageInput || !previewContainer || !previewImg || !clearBtn) {
+        return;
+      }
+
+      imageInput.addEventListener('change', () => {
+        if (!imageInput.files || imageInput.files.length === 0) {
+          previewContainer.classList.add('hidden');
+          previewImg.src = '';
+          return;
+        }
+
+        const file = imageInput.files[0];
+        previewImg.src = URL.createObjectURL(file);
+        previewContainer.classList.remove('hidden');
+      });
+
+      clearBtn.addEventListener('click', () => {
+        imageInput.value = '';
+        previewContainer.classList.add('hidden');
+        previewImg.src = '';
+      });
     }
 
     async function loadProjects() {
@@ -312,22 +443,66 @@
       btnRegister.addEventListener('click', registerUser);
       btnLogout.addEventListener('click', logout);
       btnHome.addEventListener('click', () => window.location.href = 'index.html');
-      btnToHome.addEventListener('click', () => window.location.href = 'index.html');
+      if (btnToHome) {
+        btnToHome.addEventListener('click', () => window.location.href = 'index.html');
+      }
+      if (btnNewRequest) {
+        btnNewRequest.addEventListener('click', () => showModal('requestModal'));
+      }
+      document.querySelectorAll('[data-modal-close]').forEach(button => {
+        button.addEventListener('click', closeModal);
+      });
+      if (requestForm) {
+        requestForm.addEventListener('submit', async event => {
+          event.preventDefault();
+          const name = document.getElementById('requestName').value.trim();
+          const message = document.getElementById('requestMessage').value.trim();
+
+          if (!name || !message) {
+            alert('Заполните имя и описание задачи');
+            return;
+          }
+
+          try {
+            await apiFetch(`${API_BASE}/request.php`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name, message }),
+            });
+
+            requestForm.reset();
+            closeModal();
+            loadRequests();
+            alert('Заявка отправлена');
+          } catch (error) {
+            alert(error.message);
+          }
+        });
+      }
+      setupProjectDateMask();
+      setupProjectImagePreview();
       projectForm.addEventListener('submit', async event => {
         event.preventDefault();
         const title = document.getElementById('projectTitle').value.trim();
         const category = document.getElementById('projectCategory').value.trim();
+        const projectDate = document.getElementById('projectDate').value.trim();
         const description = document.getElementById('projectDescription').value.trim();
         const imageInput = document.getElementById('projectImage');
 
-        if (!title || !category || !description) {
+        if (!title || !category || !projectDate || !description) {
           alert('Заполните все поля проекта');
+          return;
+        }
+
+        if (!/^\d{2}\.\d{2}\.\d{4}$/.test(projectDate)) {
+          alert('Дата проекта должна быть в формате dd.mm.yyyy');
           return;
         }
 
         const formData = new FormData();
         formData.append('title', title);
         formData.append('category', category);
+        formData.append('project_date', projectDate);
         formData.append('description', description);
         if (imageInput.files.length > 0) {
           formData.append('image', imageInput.files[0]);
@@ -346,6 +521,12 @@
           });
 
           document.getElementById('projectForm').reset();
+          const previewContainer = document.getElementById('projectImagePreview');
+          const previewImg = document.getElementById('projectImagePreviewImg');
+          if (previewContainer && previewImg) {
+            previewContainer.classList.add('hidden');
+            previewImg.src = '';
+          }
           await loadProjects();
           alert('Проект добавлен');
         } catch (error) {
