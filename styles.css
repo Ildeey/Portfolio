@@ -1173,6 +1173,54 @@ section {
   transition-duration: 0.1s;
 }
 
+.simple-project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.simple-project-card {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #1a1a1a;
+  border-radius: 0.85rem;
+  background: #0c0c0c;
+}
+
+.simple-project-card-image {
+  min-width: 120px;
+  min-height: 100px;
+  overflow: hidden;
+  border-radius: 0.85rem;
+  background: #111;
+}
+
+.simple-project-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.simple-project-card-body h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.simple-project-card-body p {
+  margin: 0;
+  color: #bdbdbd;
+}
+
+.simple-project-card-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #7f7f7f;
+  margin-bottom: 0.75rem;
+}
+
 .cat-project-thumb {
   width: 64px;
   height: 64px;

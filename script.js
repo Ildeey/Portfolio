@@ -22,6 +22,9 @@ function generateBarcode(svg) {
 
 const API_BASE = './api';
 let currentUser = null;
+let currentProjects = [];
+let currentProjectsById = new Map();
+let currentProjectIndex = -1;
 
 async function apiFetch(url, options = {}) {
   const config = {
@@ -229,8 +232,84 @@ function renderCategories(projects) {
     `)
     .join('');
 
-  container.innerHTML = `<div class="cat-accordion">${categoriesHtml}</div>`;
+  const listHtml = projects
+    .map(project => `
+      <div class="simple-project-card" data-project-id="${project.id}">
+        <div class="simple-project-card-image">
+          <img src="${project.image || 'images/kartinka.jpg'}" alt="${escapeAttr(project.title)}">
+        </div>
+        <div class="simple-project-card-body">
+          <div class="simple-project-card-meta">${escapeHtml(project.category)} · ${escapeHtml(formatDateString(project.created_at || ''))}</div>
+          <h4>${escapeHtml(project.title)}</h4>
+          <p>${escapeHtml(project.description)}</p>
+        </div>
+      </div>
+    `)
+    .join('');
+
+  container.innerHTML = `
+    <div class="cat-accordion">${categoriesHtml}</div>
+    <div class="simple-project-grid">
+      ${listHtml}
+    </div>
+  `;
+
   attachCategoryAccordion();
+  attachProjectCardListeners(projects);
+}
+
+function attachProjectCardListeners(projects) {
+  currentProjects = projects || [];
+  currentProjectsById = new Map(currentProjects.map((project, index) => [String(project.id), { ...project, index }]));
+
+  document.querySelectorAll('.cat-project-item, .simple-project-card').forEach(card => {
+    const id = card.getAttribute('data-project-id');
+    if (!id) return;
+
+    card.addEventListener('click', () => {
+      const project = currentProjectsById.get(id);
+      if (project) {
+        showProjectDetail(project.index);
+      }
+    });
+  });
+}
+
+function showProjectDetail(index) {
+  const project = currentProjects[index];
+  if (!project) return;
+  currentProjectIndex = index;
+
+  const modalImage = document.getElementById('modalImage');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalDescription = document.getElementById('modalDescription');
+
+  if (modalImage) {
+    modalImage.src = project.image || 'images/kartinka.jpg';
+    modalImage.alt = project.title || 'Project image';
+  }
+
+  if (modalTitle) {
+    modalTitle.textContent = project.title || '';
+  }
+
+  if (modalDescription) {
+    modalDescription.textContent = project.description || '';
+  }
+
+  showModal('imageModal');
+}
+
+function showNextProject() {
+  if (currentProjects.length === 0) return;
+  currentProjectIndex = (currentProjectIndex + 1) % currentProjects.length;
+  showProjectDetail(currentProjectIndex);
+}
+
+function showPreviousProject() {
+  if (currentProjects.length === 0) return;
+  currentProjectIndex = (currentProjectIndex - 1 + currentProjects.length) % currentProjects.length;
+  showProjectDetail(currentProjectIndex);
 }
 
 function formatDateString(value) {
@@ -350,9 +429,26 @@ function showToast(message, type = 'success') {
 }
 
 function setupModalButtons() {
-  document.querySelectorAll('[data-modal-close]').forEach(button => {
+  document.querySelectorAll('[data-modal-close], .modal-close').forEach(button => {
     button.addEventListener('click', closeModal);
   });
+
+  const prevButton = document.querySelector('.modal-prev');
+  const nextButton = document.querySelector('.modal-next');
+
+  if (prevButton) {
+    prevButton.addEventListener('click', event => {
+      event.preventDefault();
+      showPreviousProject();
+    });
+  }
+
+  if (nextButton) {
+    nextButton.addEventListener('click', event => {
+      event.preventDefault();
+      showNextProject();
+    });
+  }
 
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') {
