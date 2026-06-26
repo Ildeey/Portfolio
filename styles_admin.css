@@ -1,0 +1,239 @@
+/* ============================================
+   ADMIN PANEL STYLES
+   ============================================ */
+
+/* Body & Layout */
+.wrap {
+  max-width: 980px;
+  margin: 10vh auto;
+  padding: 0 20px;
+}
+
+/* Admin Card Container */
+.admin-card {
+  background: #0f0f0f;
+  border: 1px solid #262626;
+  border-radius: 0;
+  padding: 1.5rem;
+}
+
+/* Header Section */
+.admin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-title {
+  font-size: 2.0rem;
+  font-family: Montserrat, system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.admin-badge {
+  margin-top: 0.5rem;
+  color: #7f7f7f;
+  font-size: 0.9rem;
+}
+
+/* Tab Navigation */
+.tab-buttons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.tab-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0;
+  border: 1px solid #262626;
+  background: transparent;
+  color: #d4d4d4;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-out);
+  font-family: 'Montserrat', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tab-button.active {
+  background: #C4FF4D;
+  border-color: #C4FF4D;
+  color: #080808;
+}
+
+.tab-button:hover:not(.active) {
+  border-color: #C4FF4D;
+  color: #C4FF4D;
+}
+
+/* Form & Panel */
+.card-panel {
+  background: #111;
+  border: 1px solid #262626;
+  border-radius: 0;
+  padding: 1.5rem;
+}
+
+.field-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.field-grid input,
+.field-grid textarea,
+.field-grid select {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border-radius: 0;
+  border: 1px solid #262626;
+  background: #090909;
+  color: #f0f0f0;
+  font-family: 'Montserrat', system-ui, sans-serif;
+  transition: border-color 0.2s var(--ease-out);
+}
+
+.field-grid select {
+  appearance: none;
+  padding-right: 2.5rem;
+}
+
+.field-grid select option {
+  background: #090909;
+  color: #f0f0f0;
+}
+
+.field-grid input::placeholder,
+.field-grid textarea::placeholder {
+  color: #6f6f6f;
+}
+
+.field-grid input:focus,
+.field-grid textarea:focus,
+.field-grid select:focus {
+  outline: none;
+  border-color: #C4FF4D;
+  box-shadow: 0 0 0 1px rgba(233, 240, 86, 0.2);
+}
+
+/* Labels & Checkboxes */
+.field-grid label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #d4d4d4;
+}
+
+.field-grid input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #C4FF4D;
+}
+
+/* Titles & Text */
+.section-title {
+  margin: 0 0 2rem;
+  font-size: 1.25rem;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+}
+
+.panel-title {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+
+/* Grid Layouts */
+.dashboard-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.project-list {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Project Cards */
+.project-card {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid #262626;
+  border-radius: 0;
+  background: #0b0b0b;
+  transition: all 0.2s var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .project-card:hover {
+    border-color: #C4FF4D;
+    background: rgba(233, 240, 86, 0.03);
+  }
+}
+
+.project-card h4 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f0f0f0;
+}
+
+.project-card p {
+  margin: 0;
+  color: #a3a3a3;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.project-card-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #7f7f7f;
+  text-transform: uppercase;
+}
+
+.project-card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.project-card-actions button {
+  font-size: 0.8rem;
+}
+
+/* Utility Classes */
+.hidden {
+  display: none;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .project-card {
+    grid-template-columns: 1fr;
+  }
+}
