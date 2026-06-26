@@ -1031,7 +1031,7 @@ section {
   width: 97%;
   padding: 0 -50vw;
   box-sizing: border-box;
-  min-height: 800px;
+  min-height: 600px;
   margin: 0 auto
 }
 
@@ -1045,7 +1045,7 @@ section {
   flex-direction: column;
   transition: all 0.25s var(--ease-out);
   cursor: pointer;
-  min-height: 500px;
+  min-height: 600px;
 }
 
 .category-block:hover {
@@ -1112,15 +1112,15 @@ section {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 1rem;
+  padding-top: 3rem;
 }
 
 .carousel-project {
   position: absolute;
-  width: 90%;
+  width: 100%;
   height: 80%;
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 300px 1fr;
   gap: 1rem;
   padding: 1.25rem;
   background: #111111;
@@ -1131,23 +1131,21 @@ section {
   
   /* Stack effect using CSS variables */
   --display-index: 0;
-  transform: translateY(calc(var(--display-index) * 200px)) translateX(calc(var(--display-index) * 6px)) scale(calc(1 - abs(var(--display-index)) * 0.04));
+  transform: translateY(calc(var(--display-index) * 200px)) translateX(calc(var(--display-index) * 10px)) scale(calc(1 - abs(var(--display-index)) * 0.1));
   opacity: calc(1 - abs(var(--display-index)) * 0.8);
-  z-index: calc(100 - abs(var(--display-index)) * 1);
+  z-index: calc(100 - abs(var(--display-index)) * 2);
   pointer-events: none;
 }
 
 .carousel-project[data-active="true"] {
   opacity: 1;
   z-index: 100;
-  border-color: #C4FF4D;
-  box-shadow: 0 8px 24px rgba(196, 255, 77, 0.12);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
   pointer-events: auto;
 }
 
 .carousel-project[data-active="true"]:hover {
-  border-color: #C4FF4D;
-  box-shadow: 0 12px 32px rgba(196, 255, 77, 0.2);
+  box-shadow: 0 20px 15px rgba(0, 0, 0, 0.5);
 }
 
 .project-image {
@@ -1179,6 +1177,8 @@ section {
 }
 
 .project-title {
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
   font-size: 1rem;
   font-weight: 600;
   color: #f0f0f0;
@@ -1187,8 +1187,7 @@ section {
 }
 
 .project-date {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
+  font-size: 1rem;
   color: #7f7f7f;
   margin: 0;
 }
