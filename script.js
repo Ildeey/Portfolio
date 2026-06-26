@@ -26,6 +26,10 @@ let currentProjects = [];
 let currentProjectsById = new Map();
 let currentProjectIndex = -1;
 
+// Category carousel context
+window.currentCategoryProjects = null;
+window.currentCategoryIndex = 0;
+
 async function apiFetch(url, options = {}) {
   const config = {
     credentials: 'include',
@@ -158,6 +162,10 @@ function closeModal() {
     modal.classList.add('modal-hidden');
     modal.setAttribute('aria-hidden', 'true');
   });
+  
+  // Clear category context when closing modal
+  window.currentCategoryProjects = null;
+  window.currentCategoryIndex = 0;
 }
 
 function escapeHtml(value) {
@@ -243,29 +251,35 @@ function renderCategories(projects) {
     items: projects.filter(p => (p.category || '').trim() === c.key)
   }));
 
-  // Build HTML for three blocks
-  const html = grouped.map(group => {
+  // Build HTML for three blocks with scrollable stacks
+  const html = grouped.map((group, groupIndex) => {
     const items = group.items;
     const teaserImage = items.length > 0 ? items[0].image : 'images/placeholder.jpg';
+    
     return `
-      <div class="category-block" data-category="${escapeAttr(group.meta.key)}" style="background-image: none;">
+      <div class="category-block" data-category="${escapeAttr(group.meta.key)}" data-group-index="${groupIndex}">
         <div class="category-teaser" style="background-image: url('${teaserImage}');">
           <div class="cat-title">${escapeHtml(group.meta.title)}</div>
           <div class="cat-count">${items.length} проект${items.length === 1 ? '' : 'а'}</div>
         </div>
-        <div class="category-expanded">
-          <div class="category-expanded-header">
-            <div class="cat-title">${escapeHtml(group.meta.title)}</div>
-            <div class="cat-count">${items.length} проект${items.length === 1 ? '' : 'а'}</div>
-          </div>
-          <div class="mini-project-row">
-            ${items.map(p => `
-              <div class="mini-project" data-project-id="${p.id}">
-                <img src="${p.image || 'images/placeholder.jpg'}" alt="${escapeAttr(p.title)}">
-                <div class="mini-title">${escapeHtml(p.title)}</div>
-                <div class="mini-date">${escapeHtml(p.project_date || formatDateString(p.created_at || ''))}</div>
+        
+        <div class="projects-carousel" data-group-index="${groupIndex}">
+          <div class="carousel-stack">
+            ${items.map((p, pIndex) => `
+              <div class="carousel-project" data-project-id="${p.id}" data-project-index="${pIndex}" style="--stack-index: ${pIndex};">
+                <div class="project-image">
+                  <img src="${p.image || 'images/placeholder.jpg'}" alt="${escapeAttr(p.title)}">
+                </div>
+                <div class="project-info">
+                  <h3 class="project-title">${escapeHtml(p.title)}</h3>
+                  <p class="project-date">${escapeHtml(p.project_date || formatDateString(p.created_at || ''))}</p>
+                  <p class="project-description">${escapeHtml(p.description.substring(0, 100))}${p.description.length > 100 ? '...' : ''}</p>
+                </div>
               </div>
             `).join('')}
+          </div>
+          <div class="carousel-counter">
+            <span class="counter-current">1</span> / <span class="counter-total">${items.length}</span>
           </div>
         </div>
       </div>
@@ -278,24 +292,128 @@ function renderCategories(projects) {
   currentProjects = projects || [];
   currentProjectsById = new Map(currentProjects.map((project, index) => [String(project.id), { ...project, index }]));
 
-  // Attach hover/click listeners
+  // Attach carousel listeners to each category block
   document.querySelectorAll('.category-block').forEach(block => {
-    block.addEventListener('mouseenter', () => block.classList.add('is-open'));
-    block.addEventListener('mouseleave', () => block.classList.remove('is-open'));
-    block.addEventListener('click', (e) => {
-      // If clicked on teaser, open; if clicked on mini project, open modal
-      const target = e.target.closest('.mini-project');
-      if (target) {
-        const id = target.getAttribute('data-project-id');
-        const entry = currentProjectsById.get(String(id));
-        if (entry) showProjectDetail(entry.index);
-        e.stopPropagation();
-        return;
+    const carousel = block.querySelector('.projects-carousel');
+    const teaser = block.querySelector('.category-teaser');
+    const stack = block.querySelector('.carousel-stack');
+    const groupIndex = parseInt(block.getAttribute('data-group-index'), 10);
+    const categoryKey = block.getAttribute('data-category');
+    const categoryProjects = grouped[groupIndex].items;
+    
+    if (!carousel || !stack) return;
+
+    let currentIndex = 0;
+    let scrollTimeout = null;
+
+    // Show teaser by default, hide carousel
+    carousel.classList.add('hidden');
+
+    // Teaser hover/click to show carousel
+    teaser.addEventListener('click', () => {
+      teaser.classList.add('hidden');
+      carousel.classList.remove('hidden');
+      currentIndex = 0;
+      updateCarouselPosition(stack, currentIndex, categoryProjects.length);
+    });
+
+    // Scroll wheel to navigate carousel
+    carousel.addEventListener('wheel', (e) => {
+      if (carousel.classList.contains('hidden')) return;
+      
+      e.preventDefault();
+      
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      
+      if (e.deltaY > 0) {
+        currentIndex = (currentIndex + 1) % categoryProjects.length;
+      } else {
+        currentIndex = (currentIndex - 1 + categoryProjects.length) % categoryProjects.length;
       }
-      // Toggle on click for touch devices
-      block.classList.toggle('is-open');
+      
+      updateCarouselPosition(stack, currentIndex, categoryProjects.length);
+      
+      scrollTimeout = setTimeout(() => {
+        scrollTimeout = null;
+      }, 300);
+    }, { passive: false });
+
+    // Touch swipe support for mobile
+    let touchStartY = 0;
+    let touchStartX = 0;
+    carousel.addEventListener('touchstart', (e) => {
+      if (carousel.classList.contains('hidden')) return;
+      touchStartY = e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+
+    carousel.addEventListener('touchend', (e) => {
+      if (carousel.classList.contains('hidden')) return;
+      
+      const touchEndY = e.changedTouches[0].clientY;
+      const touchEndX = e.changedTouches[0].clientX;
+      const diffY = touchStartY - touchEndY;
+      const diffX = Math.abs(touchStartX - e.changedTouches[0].clientX);
+      
+      // Vertical swipe detection (ignore if horizontal swipe is more pronounced)
+      if (Math.abs(diffY) > 50 && diffX < 50) {
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        
+        if (diffY > 0) {
+          // Swipe up = next
+          currentIndex = (currentIndex + 1) % categoryProjects.length;
+        } else {
+          // Swipe down = previous
+          currentIndex = (currentIndex - 1 + categoryProjects.length) % categoryProjects.length;
+        }
+        
+        updateCarouselPosition(stack, currentIndex, categoryProjects.length);
+        
+        scrollTimeout = setTimeout(() => {
+          scrollTimeout = null;
+        }, 300);
+      }
+    }, { passive: true });
+
+    // Click on project to open modal with category-specific navigation
+    stack.querySelectorAll('.carousel-project').forEach((project) => {
+      project.addEventListener('click', (e) => {
+        const projectId = project.getAttribute('data-project-id');
+        const projectIndex = parseInt(project.getAttribute('data-project-index'), 10);
+        
+        // Find the full project in all projects
+        const fullProject = currentProjectsById.get(String(projectId));
+        if (fullProject) {
+          // Store category context for modal navigation
+          window.currentCategoryProjects = categoryProjects;
+          window.currentCategoryIndex = projectIndex;
+          showProjectDetail(fullProject.index);
+        }
+      });
+    });
+
+    // Close carousel on blur/outside click
+    document.addEventListener('click', (e) => {
+      if (!block.contains(e.target) && !carousel.classList.contains('hidden')) {
+        carousel.classList.add('hidden');
+        teaser.classList.remove('hidden');
+      }
     });
   });
+}
+
+function updateCarouselPosition(stack, currentIndex, totalItems) {
+  const projects = stack.querySelectorAll('.carousel-project');
+  projects.forEach((project, index) => {
+    project.setAttribute('data-active', index === currentIndex ? 'true' : 'false');
+    project.style.setProperty('--display-index', index - currentIndex);
+  });
+  
+  // Update counter
+  const carousel = stack.closest('.projects-carousel');
+  if (carousel) {
+    carousel.querySelector('.counter-current').textContent = currentIndex + 1;
+  }
 }
 
 function attachProjectCardListeners(projects) {
@@ -368,15 +486,37 @@ function imagePrevious() {
 }
 
 function showNextProject() {
-  if (currentProjects.length === 0) return;
-  currentProjectIndex = (currentProjectIndex + 1) % currentProjects.length;
-  showProjectDetail(currentProjectIndex);
+  // If we have category context, navigate within category
+  if (window.currentCategoryProjects && window.currentCategoryProjects.length > 0) {
+    window.currentCategoryIndex = (window.currentCategoryIndex + 1) % window.currentCategoryProjects.length;
+    const nextProject = window.currentCategoryProjects[window.currentCategoryIndex];
+    const fullProject = currentProjectsById.get(String(nextProject.id));
+    if (fullProject) {
+      showProjectDetail(fullProject.index);
+    }
+  } else {
+    // Fallback to all projects
+    if (currentProjects.length === 0) return;
+    currentProjectIndex = (currentProjectIndex + 1) % currentProjects.length;
+    showProjectDetail(currentProjectIndex);
+  }
 }
 
 function showPreviousProject() {
-  if (currentProjects.length === 0) return;
-  currentProjectIndex = (currentProjectIndex - 1 + currentProjects.length) % currentProjects.length;
-  showProjectDetail(currentProjectIndex);
+  // If we have category context, navigate within category
+  if (window.currentCategoryProjects && window.currentCategoryProjects.length > 0) {
+    window.currentCategoryIndex = (window.currentCategoryIndex - 1 + window.currentCategoryProjects.length) % window.currentCategoryProjects.length;
+    const prevProject = window.currentCategoryProjects[window.currentCategoryIndex];
+    const fullProject = currentProjectsById.get(String(prevProject.id));
+    if (fullProject) {
+      showProjectDetail(fullProject.index);
+    }
+  } else {
+    // Fallback to all projects
+    if (currentProjects.length === 0) return;
+    currentProjectIndex = (currentProjectIndex - 1 + currentProjects.length) % currentProjects.length;
+    showProjectDetail(currentProjectIndex);
+  }
 }
 
 function formatDateString(value) {
@@ -574,6 +714,7 @@ async function submitProject(event) {
   const category = document.getElementById('projectCategory').value.trim();
   const description = document.getElementById('projectDescription').value.trim();
   const projectDate = document.getElementById('projectDate').value.trim();
+  const featured = document.getElementById('projectFeatured').checked;
   const imageInput = document.getElementById('projectImage');
 
   if (!title || !category || !description || !projectDate) {
@@ -591,6 +732,7 @@ async function submitProject(event) {
   formData.append('category', category);
   formData.append('description', description);
   formData.append('project_date', projectDate);
+  formData.append('featured', featured);
 
   if (imageInput && imageInput.files.length > 0) {
     formData.append('image', imageInput.files[0]);

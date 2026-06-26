@@ -293,7 +293,7 @@
         .map(project => `
           <div class="project-card">
             <div>
-              <h4>${escapeHtml(project.title)}${project.featured ? ' ⭐' : ''}</h4>
+              <h4>${escapeHtml(project.title)}${project.featured ? ' ★' : ''}</h4>
               <p class="project-card-meta">${escapeHtml(project.category)} · ${escapeHtml(project.project_date || formatDate(project.created_at))}</p>
               <p>${escapeHtml(project.description)}</p>
             </div>
