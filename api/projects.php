@@ -24,6 +24,29 @@ function ensureProjectDateColumn(PDO $pdo): bool
     return projectDateColumnExists($pdo);
 }
 
+function featuredColumnExists(PDO $pdo): bool
+{
+    $stmt = $pdo->query("SHOW COLUMNS FROM projects LIKE 'featured'");
+    return (bool) $stmt->fetch();
+}
+
+function ensureFeaturedColumn(PDO $pdo): bool
+{
+    if (featuredColumnExists($pdo)) {
+        return true;
+    }
+
+    $pdo->exec('ALTER TABLE projects ADD COLUMN featured BOOLEAN DEFAULT FALSE');
+    return featuredColumnExists($pdo);
+}
+
+function countFeaturedProjects(PDO $pdo): int
+{
+    $stmt = $pdo->query('SELECT COUNT(*) as count FROM projects WHERE featured = 1');
+    $result = $stmt->fetch();
+    return (int) ($result['count'] ?? 0);
+}
+
 function normalizeProjectDate(string $value): ?string
 {
     $value = trim($value);
@@ -46,12 +69,19 @@ function normalizeProjectDate(string $value): ?string
 if ($method === 'GET') {
     $pdo = getPDO();
     $hasProjectDate = projectDateColumnExists($pdo);
-    $select = 'SELECT id, title, category, description, image, created_by, created_at' . ($hasProjectDate ? ', project_date' : '') . ' FROM projects ORDER BY created_at DESC';
+    
+    $where = '';
+    if (isset($_GET['featured']) && $_GET['featured'] === 'true') {
+        $where = ' WHERE featured = 1';
+    }
+    
+    $select = 'SELECT id, title, category, description, image, featured, created_by, created_at' . ($hasProjectDate ? ', project_date' : '') . ' FROM projects' . $where . ' ORDER BY created_at DESC';
     $stmt = $pdo->query($select);
     $projects = $stmt->fetchAll();
 
     foreach ($projects as &$project) {
         $project['image'] = $project['image'] ? UPLOAD_URL . '/' . $project['image'] : null;
+        $project['featured'] = (bool) $project['featured'];
         if (!empty($project['project_date'])) {
             $project['project_date'] = date('d.m.Y', strtotime($project['project_date']));
         }
@@ -67,6 +97,7 @@ if ($method === 'POST') {
     $category = trim((string) ($_POST['category'] ?? ''));
     $description = trim((string) ($_POST['description'] ?? ''));
     $projectDateRaw = trim((string) ($_POST['project_date'] ?? ''));
+    $featured = (bool) ($_POST['featured'] ?? false);
     $imageName = null;
 
     if ($title === '' || $category === '' || $description === '' || $projectDateRaw === '') {
@@ -75,9 +106,15 @@ if ($method === 'POST') {
 
     $pdo = getPDO();
     ensureProjectDateColumn($pdo);
+    ensureFeaturedColumn($pdo);
+    
     $projectDate = normalizeProjectDate($projectDateRaw);
     if ($projectDate === null) {
         jsonResponse(['error' => 'Project date must be in dd.mm.yyyy format'], 400);
+    }
+
+    if ($featured && countFeaturedProjects($pdo) >= 2) {
+        jsonResponse(['error' => 'Maximum 2 featured projects allowed'], 400);
     }
 
     if (!empty($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
@@ -86,11 +123,11 @@ if ($method === 'POST') {
 
     $hasProjectDate = projectDateColumnExists($pdo);
     if ($hasProjectDate) {
-        $stmt = $pdo->prepare('INSERT INTO projects (title, category, description, image, project_date, created_by) VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$title, $category, $description, $imageName, $projectDate, $admin['id']]);
+        $stmt = $pdo->prepare('INSERT INTO projects (title, category, description, image, project_date, featured, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$title, $category, $description, $imageName, $projectDate, $featured ? 1 : 0, $admin['id']]);
     } else {
-        $stmt = $pdo->prepare('INSERT INTO projects (title, category, description, image, created_by) VALUES (?, ?, ?, ?, ?)');
-        $stmt->execute([$title, $category, $description, $imageName, $admin['id']]);
+        $stmt = $pdo->prepare('INSERT INTO projects (title, category, description, image, featured, created_by) VALUES (?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$title, $category, $description, $imageName, $featured ? 1 : 0, $admin['id']]);
     }
 
     $projectId = (int) $pdo->lastInsertId();
@@ -101,6 +138,7 @@ if ($method === 'POST') {
         'description' => $description,
         'image' => $imageName ? UPLOAD_URL . '/' . $imageName : null,
         'project_date' => $projectDateRaw,
+        'featured' => $featured,
         'created_by' => $admin['id'],
         'created_at' => date('Y-m-d H:i:s'),
     ]], 201);
@@ -132,6 +170,34 @@ if ($method === 'DELETE') {
 
     $stmt = $pdo->prepare('DELETE FROM projects WHERE id = ?');
     $stmt->execute([$id]);
+    jsonResponse(['success' => true]);
+}
+
+if ($method === 'PATCH') {
+    $admin = requireAdmin();
+
+    $id = (int) ($_GET['id'] ?? 0);
+    if ($id <= 0) {
+        jsonResponse(['error' => 'Project id is required'], 400);
+    }
+
+    $pdo = getPDO();
+    ensureFeaturedColumn($pdo);
+    
+    $input = json_decode(file_get_contents('php://input'), true) ?? [];
+    $featured = (bool) ($input['featured'] ?? false);
+
+    if ($featured && countFeaturedProjects($pdo) >= 2) {
+        jsonResponse(['error' => 'Maximum 2 featured projects allowed'], 400);
+    }
+
+    $stmt = $pdo->prepare('UPDATE projects SET featured = ? WHERE id = ?');
+    $stmt->execute([$featured ? 1 : 0, $id]);
+
+    if ($stmt->rowCount() === 0) {
+        jsonResponse(['error' => 'Project not found'], 404);
+    }
+
     jsonResponse(['success' => true]);
 }
 

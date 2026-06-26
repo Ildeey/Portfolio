@@ -102,8 +102,12 @@
                   <img id="projectImagePreviewImg" src="" alt="Превью изображения проекта">
                   <button type="button" class="btn btn-ghost" id="projectImageClearBtn">Удалить</button>
                 </div>
+                <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 0.95rem;">
+                  <input id="projectFeatured" type="checkbox">
+                  <span>Это избранный проект</span>
+                </label>
               </div>
-              <p class="admin-note">Загрузите изображение до 5 МБ в формате JPG, PNG или WEBP.</p>
+              <p class="admin-note">Загрузите изображение до 5 МБ в формате JPG, PNG или WEBP. Максимум 2 избранных проекта.</p>
               <button class="btn btn-primary" id="btnSaveProject" type="submit">Добавить проект</button>
             </form>
           </div>
@@ -319,16 +323,37 @@
         .map(project => `
           <div class="project-card">
             <div>
-              <h4>${escapeHtml(project.title)}</h4>
+              <h4>${escapeHtml(project.title)}${project.featured ? ' ⭐' : ''}</h4>
               <p class="project-card-meta">${escapeHtml(project.category)} · ${escapeHtml(project.project_date || formatDate(project.created_at))}</p>
               <p>${escapeHtml(project.description)}</p>
             </div>
             <div class="project-card-actions">
+              <button class="btn btn-ghost" data-toggle-featured="${project.id}" data-featured="${project.featured ? 'true' : 'false'}">
+                ${project.featured ? 'Удалить из избранного' : 'В избранное'}
+              </button>
               <button class="btn btn-ghost" data-delete-id="${project.id}">Удалить</button>
             </div>
           </div>
         `)
         .join('');
+
+      projectList.querySelectorAll('[data-toggle-featured]').forEach(button => {
+        button.addEventListener('click', async () => {
+          const id = button.getAttribute('data-toggle-featured');
+          const isFeatured = button.getAttribute('data-featured') === 'true';
+          if (!id) return;
+          try {
+            await apiFetch(`${API_BASE}/projects.php?id=${encodeURIComponent(id)}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ featured: !isFeatured })
+            });
+            loadProjects();
+          } catch (error) {
+            alert(error.message);
+          }
+        });
+      });
 
       projectList.querySelectorAll('[data-delete-id]').forEach(button => {
         button.addEventListener('click', async () => {
@@ -487,6 +512,7 @@
         const category = document.getElementById('projectCategory').value.trim();
         const projectDate = document.getElementById('projectDate').value.trim();
         const description = document.getElementById('projectDescription').value.trim();
+        const featured = document.getElementById('projectFeatured').checked;
         const imageInput = document.getElementById('projectImage');
 
         if (!title || !category || !projectDate || !description) {
@@ -504,6 +530,7 @@
         formData.append('category', category);
         formData.append('project_date', projectDate);
         formData.append('description', description);
+        formData.append('featured', featured);
         if (imageInput.files.length > 0) {
           formData.append('image', imageInput.files[0]);
         }

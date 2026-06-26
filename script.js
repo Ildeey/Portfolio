@@ -91,6 +91,7 @@ function updateRequestForm(user) {
 function updateHeader(user) {
   const loginBtn = document.getElementById('loginBtn');
   const accountBtn = document.getElementById('accountBtn');
+  const accountBtnText = document.getElementById('accountBtnText');
   const ctaAction = document.getElementById('ctaAction');
 
   if (!loginBtn || !accountBtn || !ctaAction) {
@@ -100,14 +101,26 @@ function updateHeader(user) {
   currentUser = user;
 
   if (user) {
-    loginBtn.textContent = 'Выйти';
+    loginBtn.style.display = 'inline-flex';
     accountBtn.style.display = 'inline-flex';
-    accountBtn.textContent = 'Личный кабинет';
-    ctaAction.textContent = user.role === 'admin' ? 'Добавить проект' : 'Отправить заявку';
+    const loginBtnText = document.getElementById('loginBtnText');
+    if (loginBtnText) {
+      loginBtnText.textContent = 'Выйти';
+    }
+    if (accountBtnText) {
+      accountBtnText.textContent = user.username || 'Личный кабинет';
+    }
+    ctaAction.innerHTML = user.role === 'admin' 
+      ? '<span>Добавить проект</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/></svg>'
+      : '<span>Отправить заявку</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/></svg>';
   } else {
-    loginBtn.textContent = 'Войти';
+    loginBtn.style.display = 'inline-flex';
     accountBtn.style.display = 'none';
-    ctaAction.textContent = 'Доступен к работе';
+    const loginBtnText = document.getElementById('loginBtnText');
+    if (loginBtnText) {
+      loginBtnText.textContent = 'Войти';
+    }
+    ctaAction.innerHTML = '<span>Отправить заявку</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 8H15M15 8L8 1M15 8L8 15" stroke="currentColor" stroke-width="2"/></svg>';
   }
 
   loginBtn.onclick = () => {
@@ -217,78 +230,72 @@ function renderCategories(projects) {
     return;
   }
 
-  const grouped = projects.reduce((acc, project) => {
-    const category = project.category ? project.category.trim() : 'Без категории';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(project);
-    return acc;
-  }, {});
+  // Fixed categories as requested
+  const CATS = [
+    { key: 'Графический дизайн', title: 'ДИЗАЙН' },
+    { key: 'Фотография', title: 'ФОТОГРАФИЯ' },
+    { key: 'Видеоконтент', title: 'ВИДЕОКОНТЕНТ' },
+  ];
 
-  const categoriesHtml = Object.entries(grouped)
-    .map(([category, items], index) => `
-      <div class="cat-col${index === 0 ? ' is-active' : ''}" data-category="${escapeAttr(category)}">
-        <div class="cat-col-inner">
-          <div class="cat-teaser">
-            <div class="cat-teaser-image-wrap">
-              <img src="${items[0].image || 'images/kartinka.jpg'}" class="cat-teaser-image" alt="${escapeAttr(category)}">
-            </div>
-            <div class="cat-teaser-info">
-              <h3 class="cat-title">${escapeHtml(category)}</h3>
-              <span class="cat-count">${items.length} проект${items.length === 1 ? '' : 'а'}</span>
-            </div>
+  // Group projects by exact category match
+  const grouped = CATS.map(c => ({
+    meta: c,
+    items: projects.filter(p => (p.category || '').trim() === c.key)
+  }));
+
+  // Build HTML for three blocks
+  const html = grouped.map(group => {
+    const items = group.items;
+    const teaserImage = items.length > 0 ? items[0].image : 'images/placeholder.jpg';
+    return `
+      <div class="category-block" data-category="${escapeAttr(group.meta.key)}" style="background-image: none;">
+        <div class="category-teaser" style="background-image: url('${teaserImage}');">
+          <div class="cat-title">${escapeHtml(group.meta.title)}</div>
+          <div class="cat-count">${items.length} проект${items.length === 1 ? '' : 'а'}</div>
+        </div>
+        <div class="category-expanded">
+          <div class="category-expanded-header">
+            <div class="cat-title">${escapeHtml(group.meta.title)}</div>
+            <div class="cat-count">${items.length} проект${items.length === 1 ? '' : 'а'}</div>
           </div>
-          <div class="cat-expanded">
-            <div class="cat-expanded-header">
-              <h3 class="cat-title">${escapeHtml(category)}</h3>
-              <button class="cat-close" aria-label="Закрыть">✕</button>
-            </div>
-            <div class="cat-project-list">
-              ${items
-                .map(project => `
-                  <div class="cat-project-item" data-project-id="${project.id}" data-category="${escapeAttr(category)}">
-                    <img src="${project.image || 'images/kartinka.jpg'}" class="cat-project-thumb" alt="${escapeAttr(project.title)}">
-                    <div class="cat-project-info">
-                      <span class="cat-project-year">${escapeHtml(project.project_date || formatDateString(project.created_at || ''))}</span>
-                      <h4 class="cat-project-title">${escapeHtml(project.title)}</h4>
-                      <p class="cat-project-desc">${escapeHtml(project.description)}</p>
-                    </div>
-                    <span class="cat-project-view">[ View ]</span>
-                  </div>
-                `)
-                .join('')}
-            </div>
+          <div class="mini-project-row">
+            ${items.map(p => `
+              <div class="mini-project" data-project-id="${p.id}">
+                <img src="${p.image || 'images/placeholder.jpg'}" alt="${escapeAttr(p.title)}">
+                <div class="mini-title">${escapeHtml(p.title)}</div>
+                <div class="mini-date">${escapeHtml(p.project_date || formatDateString(p.created_at || ''))}</div>
+              </div>
+            `).join('')}
           </div>
         </div>
       </div>
-    `)
-    .join('');
+    `;
+  }).join('');
 
-  const listHtml = projects
-    .map(project => `
-      <div class="simple-project-card" data-project-id="${project.id}">
-        <div class="simple-project-card-image">
-          <img src="${project.image || 'images/kartinka.jpg'}" alt="${escapeAttr(project.title)}">
-        </div>
-        <div class="simple-project-card-body">
-          <div class="simple-project-card-meta">${escapeHtml(project.category)} · ${escapeHtml(project.project_date || formatDateString(project.created_at || ''))}</div>
-          <h4>${escapeHtml(project.title)}</h4>
-          <p>${escapeHtml(project.description)}</p>
-        </div>
-      </div>
-    `)
-    .join('');
+  container.innerHTML = html;
 
-  container.innerHTML = `
-    <div class="cat-accordion">${categoriesHtml}</div>
-    <div class="simple-project-grid">
-      ${listHtml}
-    </div>
-  `;
+  // Save current projects mapping for modal lookup
+  currentProjects = projects || [];
+  currentProjectsById = new Map(currentProjects.map((project, index) => [String(project.id), { ...project, index }]));
 
-  attachCategoryAccordion();
-  attachProjectCardListeners(projects);
+  // Attach hover/click listeners
+  document.querySelectorAll('.category-block').forEach(block => {
+    block.addEventListener('mouseenter', () => block.classList.add('is-open'));
+    block.addEventListener('mouseleave', () => block.classList.remove('is-open'));
+    block.addEventListener('click', (e) => {
+      // If clicked on teaser, open; if clicked on mini project, open modal
+      const target = e.target.closest('.mini-project');
+      if (target) {
+        const id = target.getAttribute('data-project-id');
+        const entry = currentProjectsById.get(String(id));
+        if (entry) showProjectDetail(entry.index);
+        e.stopPropagation();
+        return;
+      }
+      // Toggle on click for touch devices
+      block.classList.toggle('is-open');
+    });
+  });
 }
 
 function attachProjectCardListeners(projects) {
@@ -308,19 +315,34 @@ function attachProjectCardListeners(projects) {
   });
 }
 
+let modalImages = [];
+let modalImageIndex = 0;
+
+function updateModalImage() {
+  const modalImage = document.getElementById('modalImage');
+  if (!modalImage) return;
+  modalImage.src = modalImages[modalImageIndex] || 'images/placeholder.jpg';
+}
+
 function showProjectDetail(index) {
   const project = currentProjects[index];
   if (!project) return;
   currentProjectIndex = index;
 
-  const modalImage = document.getElementById('modalImage');
   const modalTitle = document.getElementById('modalTitle');
   const modalDescription = document.getElementById('modalDescription');
 
-  if (modalImage) {
-    modalImage.src = project.image || 'images/kartinka.jpg';
-    modalImage.alt = project.title || 'Project image';
+  // Prepare images array (support project.images if present)
+  if (Array.isArray(project.images) && project.images.length > 0) {
+    modalImages = project.images.slice(0, 3);
+  } else if (project.image) {
+    modalImages = [project.image];
+  } else {
+    modalImages = ['images/placeholder.jpg'];
   }
+  modalImageIndex = 0;
+
+  updateModalImage();
 
   if (modalTitle) {
     modalTitle.textContent = project.title || '';
@@ -331,6 +353,18 @@ function showProjectDetail(index) {
   }
 
   showModal('imageModal');
+}
+
+function imageNext() {
+  if (!modalImages || modalImages.length === 0) return;
+  modalImageIndex = (modalImageIndex + 1) % modalImages.length;
+  updateModalImage();
+}
+
+function imagePrevious() {
+  if (!modalImages || modalImages.length === 0) return;
+  modalImageIndex = (modalImageIndex - 1 + modalImages.length) % modalImages.length;
+  updateModalImage();
 }
 
 function showNextProject() {
@@ -364,6 +398,68 @@ async function loadProjects() {
       container.innerHTML = `<div class="empty-state">Не удалось загрузить проекты: ${escapeHtml(error.message)}</div>`;
     }
   }
+}
+
+async function loadKeyProjects() {
+  try {
+    const data = await apiFetch(`${API_BASE}/projects.php?featured=true`);
+    const projects = data.projects || [];
+    renderKeyProjects(projects);
+  } catch (error) {
+    const container = document.getElementById('keyProjectsGrid');
+    if (container) {
+      container.innerHTML = `<div class="admin-note" style="grid-column: 1/-1; text-align: center;">Не удалось загрузить проекты</div>`;
+    }
+  }
+}
+
+function renderKeyProjects(projects) {
+  const container = document.getElementById('keyProjectsGrid');
+  if (!container) return;
+
+  if (!projects || projects.length === 0) {
+    container.innerHTML = '<div class="admin-note" style="grid-column: 1/-1; text-align: center;">Избранные проекты не найдены</div>';
+    return;
+  }
+
+  container.innerHTML = projects.slice(0, 2).map(project => {
+    const year = project.project_date 
+      ? new Date(project.project_date).getFullYear()
+      : new Date(project.created_at).getFullYear();
+    
+    return `
+      <a href="#" class="kp-card" data-project-id="${project.id}">
+        <div class="kp-image-wrap">
+          <img src="${project.image || 'images/placeholder.jpg'}" alt="${escapeHtml(project.title)}" class="kp-image">
+        </div>
+        <div class="kp-body">
+          <div class="kp-meta">
+            <span class="kp-year">${year}</span>
+            <span class="kp-tag">${escapeHtml(project.category)}</span>
+          </div>
+          <h3 class="kp-title">${escapeHtml(project.title)}</h3>
+          <p class="kp-desc">${escapeHtml(project.description.substring(0, 120))}${project.description.length > 120 ? '...' : ''}</p>
+          <span class="kp-view">[ View ]</span>
+        </div>
+      </a>
+    `;
+  }).join('');
+
+  // Add click handlers to open project detail modal
+  container.querySelectorAll('[data-project-id]').forEach(card => {
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+      const projectId = card.getAttribute('data-project-id');
+      // Find the project index in the full projects list
+      loadProjects().then(() => {
+        const allCards = document.querySelectorAll('[data-project-id]');
+        const index = Array.from(allCards).indexOf(card);
+        if (index >= 0) {
+          showProjectDetail(index);
+        }
+      });
+    });
+  });
 }
 
 async function submitRequest(event) {
@@ -566,15 +662,21 @@ function setupModalButtons() {
   if (prevButton) {
     prevButton.addEventListener('click', event => {
       event.preventDefault();
-      showPreviousProject();
+      imagePrevious();
     });
   }
 
   if (nextButton) {
     nextButton.addEventListener('click', event => {
       event.preventDefault();
-      showNextProject();
+      imageNext();
     });
+  }
+
+  // CTA "Оставить заявку" button in footer
+  const leaveRequestBtn = document.getElementById('leaveRequestBtn');
+  if (leaveRequestBtn) {
+    leaveRequestBtn.addEventListener('click', () => showModal('requestModal'));
   }
 
   document.addEventListener('keydown', event => {
@@ -599,13 +701,67 @@ function setupProjectForm() {
   }
 }
 
+function setupHeroDistortion() {
+  const heroSection = document.getElementById('hero');
+  const heroImage = document.querySelector('.hero-center-image');
+  
+  if (!heroSection || !heroImage) return;
+  
+  const maxOffset = 25; // Maximum pixel offset in any direction
+  let targetOffsetX = 0;
+  let targetOffsetY = 0;
+  let currentOffsetX = 0;
+  let currentOffsetY = 0;
+  let animationId = null;
+  
+  function animate() {
+    // Smooth interpolation towards target position
+    currentOffsetX += (targetOffsetX - currentOffsetX) * 0.1;
+    currentOffsetY += (targetOffsetY - currentOffsetY) * 0.1;
+    
+    // Apply the transform to the image
+    heroImage.style.transform = `translate(calc(-50% + ${currentOffsetX}px), calc(-50% + ${currentOffsetY}px))`;
+    
+    animationId = requestAnimationFrame(animate);
+  }
+  
+  heroSection.addEventListener('mousemove', (e) => {
+    const rect = heroSection.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    // Calculate position relative to center (-1 to 1)
+    const relX = (e.clientX - rect.left - centerX) / centerX;
+    const relY = (e.clientY - rect.top - centerY) / centerY;
+    
+    // Clamp values between -1 and 1
+    const clampedX = Math.max(-1, Math.min(1, relX));
+    const clampedY = Math.max(-1, Math.min(1, relY));
+    
+    // Calculate offset
+    targetOffsetX = clampedX * maxOffset;
+    targetOffsetY = clampedY * maxOffset;
+    
+    if (!animationId) {
+      animationId = requestAnimationFrame(animate);
+    }
+  });
+  
+  heroSection.addEventListener('mouseleave', () => {
+    targetOffsetX = 0;
+    targetOffsetY = 0;
+  });
+}
+
 async function initSite() {
   const user = await getCurrentUser();
   updateHeader(user);
   updateRequestForm(user);
   setupModalButtons();
   setupProjectForm();
+  setupHeroDistortion();
   await loadProjects();
+  await loadKeyProjects();
 }
 
 /* ============================================
@@ -697,38 +853,4 @@ document.addEventListener('DOMContentLoaded', function () {
   initSite();
 });
 
-/* ============================================
-   VISITOR COUNTER & TIME TRACKING
-   ============================================ */
-let visits = parseInt(localStorage.getItem('portfolio_visits')) || 0;
-visits++;
-localStorage.setItem('portfolio_visits', visits);
-let totalTime = parseInt(localStorage.getItem('portfolio_total_time')) || 0;
-const visitStatsElement = document.getElementById('visit-stats');
-if (visitStatsElement) visitStatsElement.textContent = `Визитов: ${visits}`;
-
-function formatTime(seconds) {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  if (hours > 0) return `${hours}/${minutes}/${secs}`;
-  if (minutes > 0) return `${minutes}/${secs}`;
-  return `${secs}`;
-}
-
-const timeSpentElement = document.getElementById('time-spent');
-if (timeSpentElement) timeSpentElement.textContent = formatTime(totalTime);
-
-const sessionStart = Date.now();
-const timeInterval = setInterval(() => {
-  totalTime++;
-  localStorage.setItem('portfolio_total_time', totalTime);
-  if (timeSpentElement) timeSpentElement.textContent = formatTime(totalTime);
-}, 1000);
-
-window.addEventListener('beforeunload', () => {
-  clearInterval(timeInterval);
-  const finalTime = Math.floor((Date.now() - sessionStart) / 1000);
-  const currentTotal = parseInt(localStorage.getItem('portfolio_total_time')) || 0;
-  localStorage.setItem('portfolio_total_time', currentTotal + finalTime);
-});
+// Visitor counter and time tracking removed per design
